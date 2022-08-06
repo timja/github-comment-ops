@@ -18,7 +18,7 @@ describe("commands", () => {
       },
     });
 
-    expect(commands.length === 0).toEqual(false);
+    expect(commands).toHaveLength(1);
   });
   test("getCommands is not empty when multiple matches", () => {
     const commands = getCommands("any", {
