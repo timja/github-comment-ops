@@ -8,7 +8,7 @@ describe("commands", () => {
       },
     });
 
-    expect(commands.length === 0).toEqual(true);
+    expect(commands).toHaveLength(0);
   });
 
   test("getCommands is not empty when something matches", () => {
@@ -27,6 +27,6 @@ describe("commands", () => {
       },
     });
 
-    expect(commands.length === 0).toEqual(false);
+    expect(commands).toHaveLength(2);
   });
 });
