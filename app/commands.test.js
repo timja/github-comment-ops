@@ -1,32 +1,32 @@
-import { getCommands, noneMatch } from "./commands.js";
+import { getCommands } from "./commands.js";
 
 describe("commands", () => {
-  test("noneMatch is true when nothing matches", () => {
+  test("getCommands is empty when nothing matches", () => {
     const commands = getCommands("any", {
       comment: {
         body: "nothing that would every match",
       },
     });
 
-    expect(noneMatch(commands)).toEqual(true);
+    expect(commands).toHaveLength(0);
   });
 
-  test("noneMatch is false when something matches", () => {
+  test("getCommands is not empty when something matches", () => {
     const commands = getCommands("any", {
       comment: {
         body: "/label one",
       },
     });
 
-    expect(noneMatch(commands)).toEqual(false);
+    expect(commands).toHaveLength(1);
   });
-  test("noneMatch is false when multiple matches", () => {
+  test("getCommands is not empty when multiple matches", () => {
     const commands = getCommands("any", {
       comment: {
         body: "/label one \n/reviewer reviewer",
       },
     });
 
-    expect(noneMatch(commands)).toEqual(false);
+    expect(commands).toHaveLength(2);
   });
 });

@@ -6,7 +6,7 @@ import { RemoveLabelCommand } from "./commands/remove-label-command.js";
 import { ReviewerCommand } from "./commands/reviewer-command.js";
 
 export function getCommands(id, payload) {
-  return [
+  const commands = [
     new TransferCommand(id, payload),
     new CloseCommand(id, payload),
     new ReopenCommand(id, payload),
@@ -14,10 +14,5 @@ export function getCommands(id, payload) {
     new RemoveLabelCommand(id, payload),
     new ReviewerCommand(id, payload),
   ];
-}
-
-export function noneMatch(commands) {
-  return !commands.some((command) => {
-    return command.matches() !== null;
-  });
+  return commands.filter((command) => command.matches());
 }

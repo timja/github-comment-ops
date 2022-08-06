@@ -6,14 +6,14 @@ import { Octokit } from "@octokit/core";
 import { config as octoKitConfig } from "@probot/octokit-plugin-config";
 
 import deepmerge from "deepmerge";
-import { getCommands, noneMatch } from "./commands.js";
+import { getCommands } from "./commands.js";
+
+const OctokitConfig = Octokit.plugin(octoKitConfig);
 
 export async function router(auth, id, payload, verbose) {
-  const sourceRepo = payload.repository.name;
-
   const commands = getCommands(id, payload);
 
-  if (noneMatch(commands)) {
+  if (commands.length === 0) {
     if (verbose) {
       console.log("No match for", payload.comment.body);
     }
@@ -21,20 +21,18 @@ export async function router(auth, id, payload, verbose) {
   }
 
   const authToken = await getAuthToken(auth, payload.installation.id);
-  const OctokitConfig = Octokit.plugin(octoKitConfig);
   const octokit = new OctokitConfig({ auth: authToken });
 
   // TODO validate against schema
   // noinspection JSUnusedGlobalSymbols
   const { config } = await octokit.config.get({
     owner: payload.repository.owner.login,
-    repo: sourceRepo,
+    repo: payload.repository.name,
     path: ".github/comment-ops.yml",
     defaults: (configs) => deepmerge.all([defaultConfig, ...configs]),
   });
 
-  const runCommands = commands.filter((command) => command.matches());
-  for (const command of runCommands) {
+  for (const command of commands) {
     const result = command.enabled(config);
     result.enabled
       ? await command.run(authToken)
