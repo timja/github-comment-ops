@@ -10,12 +10,18 @@ import { getCommands } from "./commands.js";
 
 const OctokitConfig = Octokit.plugin(octoKitConfig);
 
+import { getLogger } from "./logger.js";
+
+const classLogger = getLogger("router");
+
 export async function router(auth, id, payload, verbose) {
+  const logger = classLogger.child({ user: payload.sender.login, id });
+
   const commands = getCommands(id, payload);
 
   if (commands.length === 0) {
     if (verbose) {
-      console.log("No match for", payload.comment.body);
+      logger.info(`No match for "${payload.comment.body}"`);
     }
     return;
   }

@@ -2,8 +2,10 @@ import { reviewerMatcher } from "../matchers.js";
 import { reviewerEnabled } from "../command-enabled.js";
 import { requestReviewers } from "../github.js";
 import { Command } from "./command.js";
-import { actorRequest } from "./actor-request.js";
 import { extractUsersAndTeams } from "../converters.js";
+import { getLogger } from "../logger.js";
+
+const classLogger = getLogger("commands/reviewer-command");
 
 export class ReviewerCommand extends Command {
   constructor(id, payload) {
@@ -21,10 +23,14 @@ export class ReviewerCommand extends Command {
   async run(authToken) {
     const reviewerMatches = this.matches()[1];
     const sourceRepo = this.payload.repository.name;
-    console.log(
-      `${this.id} Requesting review for ${reviewerMatches} at ${
-        this.payload.issue.html_url
-      } ${actorRequest(this.payload)}`
+
+    const logger = classLogger.child({
+      user: this.payload.sender.login,
+      id: this.id,
+    });
+
+    logger.info(
+      `Requesting review for ${reviewerMatches} at ${this.payload.issue.html_url}`
     );
     const reviewers = extractUsersAndTeams(
       this.payload.repository.owner.login,

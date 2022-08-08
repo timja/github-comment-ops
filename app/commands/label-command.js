@@ -2,8 +2,11 @@ import { labelMatcher } from "../matchers.js";
 import { labelEnabled } from "../command-enabled.js";
 import { addLabel } from "../github.js";
 import { Command } from "./command.js";
-import { actorRequest } from "./actor-request.js";
 import { extractCommaSeparated } from "../converters.js";
+
+import { getLogger } from "../logger.js";
+
+const classLogger = getLogger("commands/label-command");
 
 export class LabelCommand extends Command {
   constructor(id, payload) {
@@ -23,10 +26,13 @@ export class LabelCommand extends Command {
     const labels = extractCommaSeparated(this.matches()[1]);
     const sourceRepo = this.payload.repository.name;
 
-    console.log(
-      `${this.id} Labeling issue ${
-        this.payload.issue.html_url
-      } with labels ${labels} ${actorRequest(this.payload)}`
+    const logger = classLogger.child({
+      user: this.payload.sender.login,
+      id: this.id,
+    });
+
+    logger.info(
+      `Labeling issue ${this.payload.issue.html_url} with labels ${labels}`
     );
     await addLabel(
       authToken,
