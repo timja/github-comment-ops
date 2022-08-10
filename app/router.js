@@ -1,4 +1,4 @@
-import { reportError } from "./github.js";
+import { addReaction, reportError } from "./github.js";
 import { getAuthToken } from "./auth.js";
 import { defaultConfig } from "./default-config.js";
 
@@ -34,8 +34,11 @@ export async function router(auth, id, payload, verbose) {
 
   for (const command of commands) {
     const result = command.enabled(config);
-    result.enabled
-      ? await command.run(authToken)
-      : await reportError(authToken, payload.issue.node_id, result.error);
+    if (result.enabled) {
+      await addReaction(authToken, payload.issue.comment.node_id, "THUMBS_UP");
+      await command.run(authToken);
+    } else {
+      await reportError(authToken, payload.issue.node_id, result.error);
+    }
   }
 }

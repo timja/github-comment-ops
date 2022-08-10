@@ -211,6 +211,36 @@ async function lookupTeam(token, organization, teamName, originalTeamName) {
   };
 }
 
+export async function addReaction(token, subjectId, content) {
+  try {
+    await graphql(
+      `
+        mutation ($subjectId: ID!, $content: ReactionContent!) {
+          addReaction(input: { subjectId: $subjectId, content: $content }) {
+            reaction {
+              content
+            }
+            subject {
+              id
+            }
+          }
+        }
+      `,
+      {
+        subjectId,
+        content,
+        headers: {
+          authorization: `token ${token}`,
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Failed to add reaction", error);
+
+    console.error(JSON.stringify(error.errors));
+  }
+}
+
 export async function reportError(token, subjectId, comment) {
   await graphql(
     `
