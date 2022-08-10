@@ -23,6 +23,8 @@ export async function router(auth, id, payload, verbose) {
   const authToken = await getAuthToken(auth, payload.installation.id);
   const octokit = new OctokitConfig({ auth: authToken });
 
+  await addReaction(authToken, payload.issue.comment.node_id, "THUMBS_UP");
+
   // TODO validate against schema
   // noinspection JSUnusedGlobalSymbols
   const { config } = await octokit.config.get({
@@ -35,10 +37,7 @@ export async function router(auth, id, payload, verbose) {
   for (const command of commands) {
     const result = command.enabled(config);
     await (result.enabled
-      ? Promise.all([
-          addReaction(authToken, payload.issue.comment.node_id, "THUMBS_UP"),
-          command.run(authToken),
-        ])
+      ? command.run(authToken)
       : reportError(authToken, payload.issue.node_id, result.error));
   }
 }
