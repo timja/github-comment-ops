@@ -34,11 +34,11 @@ export async function router(auth, id, payload, verbose) {
 
   for (const command of commands) {
     const result = command.enabled(config);
-    if (result.enabled) {
-      await addReaction(authToken, payload.issue.comment.node_id, "THUMBS_UP");
-      await command.run(authToken);
-    } else {
-      await reportError(authToken, payload.issue.node_id, result.error);
-    }
+    await (result.enabled
+      ? Promise.all([
+          addReaction(authToken, payload.issue.comment.node_id, "THUMBS_UP"),
+          command.run(authToken),
+        ])
+      : reportError(authToken, payload.issue.node_id, result.error));
   }
 }
