@@ -7,30 +7,33 @@ GitHub apps are used for authentication to limit the required permissions.
 
 ## Configuration
 
-The app can be configured with a `.github/comment-ops.yml` file in the main branch of the repository.
-
+The app is configured with a `.github/comment-ops.yml` file in the main branch of the repository.
 This can also be applied organization wide by creating it in the organization's `.github` repository.
+
+_Note: This file is required all commands are disabled by default._
 
 The order of configuration is:
 
-`default config` -> `organization` -> `repository`
+`default config` → `organization` → `repository`
 
 Default configuration:
 
 ```yaml
 commands:
+  close:
+    enabled: false
   label:
     allowedLabels: [] # any label is allowed
-    enabled: true
+    enabled: false
   removeLabel:
     allowedLabels: [] # any label is allowed
-    enabled: true
+    enabled: false
   reopen:
-    enabled: true
+    enabled: false
   reviewer:
-    enabled: true
+    enabled: false
   transfer:
-    enabled: true
+    enabled: false
 ```
 
 ## Getting started

@@ -2,23 +2,23 @@ export const defaultConfig = {
   commands: {
     label: {
       allowedLabels: [],
-      enabled: true,
+      enabled: false,
     },
     removeLabel: {
       allowedLabels: [],
-      enabled: true,
+      enabled: false,
     },
     reopen: {
-      enabled: true,
+      enabled: false,
     },
     close: {
-      enabled: true,
+      enabled: false,
     },
     reviewer: {
-      enabled: true,
+      enabled: false,
     },
     transfer: {
-      enabled: true,
+      enabled: false,
     },
   },
 };
