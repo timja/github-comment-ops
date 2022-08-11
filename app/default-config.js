@@ -11,6 +11,9 @@ export const defaultConfig = {
     reopen: {
       enabled: true,
     },
+    close: {
+      enabled: true,
+    },
     reviewer: {
       enabled: true,
     },

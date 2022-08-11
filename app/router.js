@@ -31,7 +31,16 @@ export async function router(auth, id, payload, verbose) {
 
   try {
     await addReaction(authToken, payload.comment.node_id, "THUMBS_UP");
+  } catch (error) {
+    logger.error(
+      `Failed to add reaction ${
+        error.errors ? JSON.stringify(error.errors) : ""
+      }`,
+      error
+    );
+  }
 
+  try {
     // TODO validate against schema
     // noinspection JSUnusedGlobalSymbols
     const { config } = await octokit.config.get({

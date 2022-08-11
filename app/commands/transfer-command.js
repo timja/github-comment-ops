@@ -31,12 +31,21 @@ export class TransferCommand extends Command {
     logger.info(
       `Transferring issue ${this.payload.issue.html_url} to repo ${targetRepo}`
     );
-    await transferIssue(
-      authToken,
-      this.payload.repository.owner.login,
-      sourceRepo,
-      targetRepo,
-      this.payload.issue.node_id
-    );
+    try {
+      await transferIssue(
+        authToken,
+        this.payload.repository.owner.login,
+        sourceRepo,
+        targetRepo,
+        this.payload.issue.node_id
+      );
+    } catch (error) {
+      logger.error(
+        `Failed to transfer issue ${
+          error.errors ? JSON.stringify(error.errors) : ""
+        }`,
+        error
+      );
+    }
   }
 }

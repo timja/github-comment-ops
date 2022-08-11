@@ -35,6 +35,20 @@ export class CloseCommand extends Command {
     logger.info(
       `Closing issue ${this.payload.issue.html_url}, reason: ${reason}`
     );
-    await closeIssue(authToken, sourceRepo, this.payload.issue.node_id, reason);
+    try {
+      await closeIssue(
+        authToken,
+        sourceRepo,
+        this.payload.issue.node_id,
+        reason
+      );
+    } catch (error) {
+      logger.error(
+        `Failed to close issue ${
+          error.errors ? JSON.stringify(error.errors) : ""
+        }`,
+        error
+      );
+    }
   }
 }

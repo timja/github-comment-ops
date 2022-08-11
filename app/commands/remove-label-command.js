@@ -33,12 +33,21 @@ export class RemoveLabelCommand extends Command {
     logger.info(
       `Removing label(s) from issue ${this.payload.issue.html_url}, labels ${labels}`
     );
-    await removeLabel(
-      authToken,
-      this.payload.repository.owner.login,
-      sourceRepo,
-      this.payload.issue.node_id,
-      labels
-    );
+    try {
+      await removeLabel(
+        authToken,
+        this.payload.repository.owner.login,
+        sourceRepo,
+        this.payload.issue.node_id,
+        labels
+      );
+    } catch (error) {
+      logger.error(
+        `Failed to remove label ${
+          error.errors ? JSON.stringify(error.errors) : ""
+        }`,
+        error
+      );
+    }
   }
 }

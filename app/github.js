@@ -18,47 +18,41 @@ async function convertLabelsToIds(labels, token, login, repository) {
 }
 
 export async function addLabel(token, login, repository, labelableId, labels) {
-  try {
-    const { invalidLabels, labelIds } = await convertLabelsToIds(
-      labels,
-      token,
-      login,
-      repository
-    );
+  const { invalidLabels, labelIds } = await convertLabelsToIds(
+    labels,
+    token,
+    login,
+    repository
+  );
 
-    await graphql(
-      `
-        mutation ($labelableId: ID!, $labelIds: [ID!]!) {
-          addLabelsToLabelable(
-            input: { labelableId: $labelableId, labelIds: $labelIds }
-          ) {
-            clientMutationId
-          }
+  await graphql(
+    `
+      mutation ($labelableId: ID!, $labelIds: [ID!]!) {
+        addLabelsToLabelable(
+          input: { labelableId: $labelableId, labelIds: $labelIds }
+        ) {
+          clientMutationId
         }
-      `,
-      {
-        labelableId,
-        labelIds,
-        headers: {
-          authorization: `token ${token}`,
-        },
       }
-    );
+    `,
+    {
+      labelableId,
+      labelIds,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
 
-    if (invalidLabels.length > 0) {
-      const comment = `I wasn't able to add the following labels: ${invalidLabels.join(
-        ","
-      )}
+  if (invalidLabels.length > 0) {
+    const comment = `I wasn't able to add the following labels: ${invalidLabels.join(
+      ","
+    )}
 
 Check that [the label exists](https://github.com/${login}/${repository}/labels) and is spelt right then try again.
       `;
 
-      await reportError(token, labelableId, comment);
-    }
-  } catch (error) {
-    console.error("Failed to add label", error);
-
-    console.error(JSON.stringify(error.errors));
+    await reportError(token, labelableId, comment);
   }
 }
 
@@ -104,47 +98,41 @@ export async function removeLabel(
   labelableId,
   labels
 ) {
-  try {
-    const { invalidLabels, labelIds } = await convertLabelsToIds(
-      labels,
-      token,
-      login,
-      repository
-    );
+  const { invalidLabels, labelIds } = await convertLabelsToIds(
+    labels,
+    token,
+    login,
+    repository
+  );
 
-    await graphql(
-      `
-        mutation ($labelableId: ID!, $labelIds: [ID!]!) {
-          removeLabelsFromLabelable(
-            input: { labelableId: $labelableId, labelIds: $labelIds }
-          ) {
-            clientMutationId
-          }
+  await graphql(
+    `
+      mutation ($labelableId: ID!, $labelIds: [ID!]!) {
+        removeLabelsFromLabelable(
+          input: { labelableId: $labelableId, labelIds: $labelIds }
+        ) {
+          clientMutationId
         }
-      `,
-      {
-        labelableId,
-        labelIds,
-        headers: {
-          authorization: `token ${token}`,
-        },
       }
-    );
+    `,
+    {
+      labelableId,
+      labelIds,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
 
-    if (invalidLabels.length > 0) {
-      const comment = `I wasn't able to remove the following labels: ${invalidLabels.join(
-        ","
-      )}
+  if (invalidLabels.length > 0) {
+    const comment = `I wasn't able to remove the following labels: ${invalidLabels.join(
+      ","
+    )}
 
 Check that [the label exists](https://github.com/${login}/${repository}/labels) and is spelt right then try again.
       `;
 
-      await reportError(token, labelableId, comment);
-    }
-  } catch (error) {
-    console.error("Failed to add label", error);
-
-    console.error(JSON.stringify(error.errors));
+    await reportError(token, labelableId, comment);
   }
 }
 
@@ -212,33 +200,27 @@ async function lookupTeam(token, organization, teamName, originalTeamName) {
 }
 
 export async function addReaction(token, subjectId, content) {
-  try {
-    await graphql(
-      `
-        mutation ($subjectId: ID!, $content: ReactionContent!) {
-          addReaction(input: { subjectId: $subjectId, content: $content }) {
-            reaction {
-              content
-            }
-            subject {
-              id
-            }
+  await graphql(
+    `
+      mutation ($subjectId: ID!, $content: ReactionContent!) {
+        addReaction(input: { subjectId: $subjectId, content: $content }) {
+          reaction {
+            content
+          }
+          subject {
+            id
           }
         }
-      `,
-      {
-        subjectId,
-        content,
-        headers: {
-          authorization: `token ${token}`,
-        },
       }
-    );
-  } catch (error) {
-    console.error("Failed to add reaction", error);
-
-    console.error(JSON.stringify(error.errors));
-  }
+    `,
+    {
+      subjectId,
+      content,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
 }
 
 export async function reportError(token, subjectId, comment) {
@@ -265,29 +247,23 @@ export async function reportError(token, subjectId, comment) {
 }
 
 export async function reopenIssue(token, sourceRepo, issueId) {
-  try {
-    await graphql(
-      `
-        mutation ($issue: ID!) {
-          reopenIssue(input: { issueId: $issue }) {
-            issue {
-              url
-            }
+  await graphql(
+    `
+      mutation ($issue: ID!) {
+        reopenIssue(input: { issueId: $issue }) {
+          issue {
+            url
           }
         }
-      `,
-      {
-        issue: issueId,
-        headers: {
-          authorization: `token ${token}`,
-        },
       }
-    );
-  } catch (error) {
-    console.error("Failed to reopen issue", error);
-
-    console.error(JSON.stringify(error.errors));
-  }
+    `,
+    {
+      issue: issueId,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
 }
 
 export async function requestReviewers(
@@ -298,127 +274,115 @@ export async function requestReviewers(
   users,
   teams
 ) {
-  try {
-    const convertedUsers = await Promise.all(
-      users
-        .map((user) => {
-          return {
-            original_user: user,
-            user: user.replace(/^@/, ""),
-          };
-        })
-        .map(
-          async (result) =>
-            await lookupUser(token, result.user, result.original_user)
-        )
-    );
+  const convertedUsers = await Promise.all(
+    users
+      .map((user) => {
+        return {
+          original_user: user,
+          user: user.replace(/^@/, ""),
+        };
+      })
+      .map(
+        async (result) =>
+          await lookupUser(token, result.user, result.original_user)
+      )
+  );
 
-    const invalidUsers = convertedUsers
-      .filter((result) => result.err !== undefined)
-      .map((result) => result.user);
+  const invalidUsers = convertedUsers
+    .filter((result) => result.err !== undefined)
+    .map((result) => result.user);
 
-    const userIds = convertedUsers
-      .filter((result) => result.id !== undefined)
-      .map((result) => result.id);
+  const userIds = convertedUsers
+    .filter((result) => result.id !== undefined)
+    .map((result) => result.id);
 
-    const convertedTeams = await Promise.all(
-      teams
-        .map((teamSlug) => {
-          return {
-            original_team: teamSlug,
-            team: teamSlug.replace(`@${organization}/`, ""),
-          };
-        })
-        .map(
-          async (result) =>
-            await lookupTeam(
-              token,
-              organization,
-              result.team,
-              result.original_team
-            )
-        )
-    );
+  const convertedTeams = await Promise.all(
+    teams
+      .map((teamSlug) => {
+        return {
+          original_team: teamSlug,
+          team: teamSlug.replace(`@${organization}/`, ""),
+        };
+      })
+      .map(
+        async (result) =>
+          await lookupTeam(
+            token,
+            organization,
+            result.team,
+            result.original_team
+          )
+      )
+  );
 
-    const invalidTeams = convertedTeams
-      .filter((result) => result.err !== undefined)
-      .map((result) => result.team);
+  const invalidTeams = convertedTeams
+    .filter((result) => result.err !== undefined)
+    .map((result) => result.team);
 
-    const teamIds = convertedTeams
-      .filter((result) => result.id !== undefined)
-      .map((result) => result.id);
+  const teamIds = convertedTeams
+    .filter((result) => result.id !== undefined)
+    .map((result) => result.id);
 
-    await graphql(
-      `
-        mutation ($pullRequestId: ID!, $userIds: [ID!]!, $teamIds: [ID!]!) {
-          requestReviews(
-            input: {
-              pullRequestId: $pullRequestId
-              userIds: $userIds
-              teamIds: $teamIds
-              union: true
-            }
-          ) {
-            pullRequest {
-              url
-            }
+  await graphql(
+    `
+      mutation ($pullRequestId: ID!, $userIds: [ID!]!, $teamIds: [ID!]!) {
+        requestReviews(
+          input: {
+            pullRequestId: $pullRequestId
+            userIds: $userIds
+            teamIds: $teamIds
+            union: true
+          }
+        ) {
+          pullRequest {
+            url
           }
         }
-      `,
-      {
-        pullRequestId: issueId,
-        userIds,
-        teamIds,
-        headers: {
-          authorization: `token ${token}`,
-        },
       }
-    );
+    `,
+    {
+      pullRequestId: issueId,
+      userIds,
+      teamIds,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
 
-    if (invalidUsers.length > 0 || invalidTeams.length > 0) {
-      const invalidReviewers = [...invalidUsers, ...invalidTeams];
+  if (invalidUsers.length > 0 || invalidTeams.length > 0) {
+    const invalidReviewers = [...invalidUsers, ...invalidTeams];
 
-      const comment = `I wasn't able to request review for the following reviewer(s): ${invalidReviewers.join(
-        ","
-      )}
+    const comment = `I wasn't able to request review for the following reviewer(s): ${invalidReviewers.join(
+      ","
+    )}
 
 Check that the reviewer is spelt right and try again.
       `;
 
-      await reportError(token, issueId, comment);
-    }
-  } catch (error) {
-    console.error("Failed to request reviewers", error);
-
-    console.error(JSON.stringify(error.errors));
+    await reportError(token, issueId, comment);
   }
 }
 
 export async function closeIssue(token, sourceRepo, issueId, reason) {
-  try {
-    await graphql(
-      `
-        mutation ($issue: ID!, $stateReason: IssueClosedStateReason) {
-          closeIssue(input: { issueId: $issue, stateReason: $stateReason }) {
-            issue {
-              url
-            }
+  await graphql(
+    `
+      mutation ($issue: ID!, $stateReason: IssueClosedStateReason) {
+        closeIssue(input: { issueId: $issue, stateReason: $stateReason }) {
+          issue {
+            url
           }
         }
-      `,
-      {
-        issue: issueId,
-        stateReason: reason,
-        headers: {
-          authorization: `token ${token}`,
-        },
       }
-    );
-  } catch (error) {
-    console.error("Failed to close issue", error);
-
-    console.error(JSON.stringify(error.errors));
-  }
+    `,
+    {
+      issue: issueId,
+      stateReason: reason,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
 }
 
 export async function transferIssue(
@@ -428,45 +392,39 @@ export async function transferIssue(
   targetRepo,
   issueId
 ) {
-  try {
-    const { target } = await graphql(
-      `
-        query ($owner: String!, $targetRepo: String!) {
-          target: repository(owner: $owner, name: $targetRepo) {
-            id
+  const { target } = await graphql(
+    `
+      query ($owner: String!, $targetRepo: String!) {
+        target: repository(owner: $owner, name: $targetRepo) {
+          id
+        }
+      }
+    `,
+    {
+      owner,
+      targetRepo,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
+
+  await graphql(
+    `
+      mutation ($issue: ID!, $repo: ID!) {
+        transferIssue(input: { issueId: $issue, repositoryId: $repo }) {
+          issue {
+            url
           }
         }
-      `,
-      {
-        owner,
-        targetRepo,
-        headers: {
-          authorization: `token ${token}`,
-        },
       }
-    );
-
-    await graphql(
-      `
-        mutation ($issue: ID!, $repo: ID!) {
-          transferIssue(input: { issueId: $issue, repositoryId: $repo }) {
-            issue {
-              url
-            }
-          }
-        }
-      `,
-      {
-        issue: issueId,
-        repo: target.id,
-        headers: {
-          authorization: `token ${token}`,
-        },
-      }
-    );
-  } catch (error) {
-    console.error("Failed to transfer issue", error);
-
-    console.error(JSON.stringify(error.errors));
-  }
+    `,
+    {
+      issue: issueId,
+      repo: target.id,
+      headers: {
+        authorization: `token ${token}`,
+      },
+    }
+  );
 }

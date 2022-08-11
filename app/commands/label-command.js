@@ -34,12 +34,21 @@ export class LabelCommand extends Command {
     logger.info(
       `Labeling issue ${this.payload.issue.html_url} with labels ${labels}`
     );
-    await addLabel(
-      authToken,
-      this.payload.repository.owner.login,
-      sourceRepo,
-      this.payload.issue.node_id,
-      labels
-    );
+    try {
+      await addLabel(
+        authToken,
+        this.payload.repository.owner.login,
+        sourceRepo,
+        this.payload.issue.node_id,
+        labels
+      );
+    } catch (error) {
+      logger.error(
+        `Failed to add label ${
+          error.errors ? JSON.stringify(error.errors) : ""
+        }`,
+        error
+      );
+    }
   }
 }
