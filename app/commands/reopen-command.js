@@ -27,6 +27,11 @@ export class ReopenCommand extends Command {
       id: this.id,
     });
 
+    if (this.payload.issue.pull_request) {
+      logger.info("Not re-opening pull request");
+      return;
+    }
+
     logger.info(`Re-opening issue ${this.payload.issue.html_url}`);
 
     try {

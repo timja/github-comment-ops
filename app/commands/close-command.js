@@ -32,6 +32,11 @@ export class CloseCommand extends Command {
       id: this.id,
     });
 
+    if (this.payload.issue.pull_request) {
+      logger.info("Not closing pull request");
+      return;
+    }
+
     logger.info(
       `Closing issue ${this.payload.issue.html_url}, reason: ${reason}`
     );
