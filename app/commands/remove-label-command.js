@@ -2,8 +2,10 @@ import { removeLabelMatcher } from "../matchers.js";
 import { removeLabelEnabled } from "../command-enabled.js";
 import { removeLabel } from "../github.js";
 import { Command } from "./command.js";
-import { actorRequest } from "./actor-request.js";
 import { extractCommaSeparated } from "../converters.js";
+import { getLogger } from "../logger.js";
+
+const classLogger = getLogger("commands/remove-label-command");
 
 export class RemoveLabelCommand extends Command {
   constructor(id, payload) {
@@ -22,10 +24,14 @@ export class RemoveLabelCommand extends Command {
   async run(authToken) {
     const sourceRepo = this.payload.repository.name;
     const labels = extractCommaSeparated(this.matches()[1]);
-    console.log(
-      `${this.id} Removing label(s) from issue ${
-        this.payload.issue.html_url
-      }, labels ${labels} ${actorRequest(this.payload)}`
+
+    const logger = classLogger.child({
+      user: this.payload.sender.login,
+      id: this.id,
+    });
+
+    logger.info(
+      `Removing label(s) from issue ${this.payload.issue.html_url}, labels ${labels}`
     );
     await removeLabel(
       authToken,

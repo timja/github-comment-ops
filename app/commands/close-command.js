@@ -2,7 +2,9 @@ import { Command } from "./command.js";
 import { closeMatcher } from "../matchers.js";
 import { closeEnabled } from "../command-enabled.js";
 import { closeIssue } from "../github.js";
-import { actorRequest } from "./actor-request.js";
+import { getLogger } from "../logger.js";
+
+const classLogger = getLogger("commands/close-command");
 
 export class CloseCommand extends Command {
   constructor(id, payload) {
@@ -24,10 +26,14 @@ export class CloseCommand extends Command {
       closeMatches.length > 1 && closeMatches[1] === "not-planned"
         ? "NOT_PLANNED"
         : "COMPLETED";
-    console.log(
-      `${this.id} Closing issue ${
-        this.payload.issue.html_url
-      }, reason: ${reason} ${actorRequest(this.payload)}`
+
+    const logger = classLogger.child({
+      user: this.payload.sender.login,
+      id: this.id,
+    });
+
+    logger.info(
+      `Closing issue ${this.payload.issue.html_url}, reason: ${reason}`
     );
     await closeIssue(authToken, sourceRepo, this.payload.issue.node_id, reason);
   }
