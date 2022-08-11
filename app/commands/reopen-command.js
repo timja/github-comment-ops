@@ -2,7 +2,9 @@ import { reopenMatcher } from "../matchers.js";
 import { reopenEnabled } from "../command-enabled.js";
 import { reopenIssue } from "../github.js";
 import { Command } from "./command.js";
-import { actorRequest } from "./actor-request.js";
+import { getLogger } from "../logger.js";
+
+const classLogger = getLogger("commands/reopen-command");
 
 export class ReopenCommand extends Command {
   constructor(id, payload) {
@@ -19,11 +21,14 @@ export class ReopenCommand extends Command {
 
   async run(authToken) {
     const sourceRepo = this.payload.repository.name;
-    console.log(
-      `${this.id} Re-opening issue ${
-        this.payload.issue.html_url
-      } ${actorRequest(this.payload)}`
-    );
+
+    const logger = classLogger.child({
+      user: this.payload.sender.login,
+      id: this.id,
+    });
+
+    logger.info(`Re-opening issue ${this.payload.issue.html_url}`);
+
     await reopenIssue(authToken, sourceRepo, this.payload.issue.node_id);
   }
 }

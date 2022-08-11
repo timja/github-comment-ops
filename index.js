@@ -5,10 +5,14 @@ import { createAppAuth } from "@octokit/auth-app";
 
 import { router } from "./app/router.js";
 
+import { getLogger } from "./app/logger.js";
+
 const verbose = process.env.VERBOSE === "true";
 
 const secret = process.env.WEBHOOK_SECRET;
 const port = Number.parseInt(process.env.PORT || "3000", 10);
+
+const logger = getLogger("index");
 
 const webhooks = new Webhooks({
   secret,
@@ -33,5 +37,5 @@ createServer(
     },
   })
 ).listen(port, () => {
-  console.log(`Listening for events on port ${port}`);
+  logger.info(`Listening for events on port ${port}`);
 });
