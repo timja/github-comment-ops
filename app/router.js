@@ -1,4 +1,4 @@
-import { reportError } from "./github.js";
+import { addReaction, reportError } from "./github.js";
 import { getAuthToken } from "./auth.js";
 import { defaultConfig } from "./default-config.js";
 
@@ -29,19 +29,25 @@ export async function router(auth, id, payload, verbose) {
   const authToken = await getAuthToken(auth, payload.installation.id);
   const octokit = new OctokitConfig({ auth: authToken });
 
-  // TODO validate against schema
-  // noinspection JSUnusedGlobalSymbols
-  const { config } = await octokit.config.get({
-    owner: payload.repository.owner.login,
-    repo: payload.repository.name,
-    path: ".github/comment-ops.yml",
-    defaults: (configs) => deepmerge.all([defaultConfig, ...configs]),
-  });
+  try {
+    await addReaction(authToken, payload.comment.node_id, "THUMBS_UP");
 
-  for (const command of commands) {
-    const result = command.enabled(config);
-    result.enabled
-      ? await command.run(authToken)
-      : await reportError(authToken, payload.issue.node_id, result.error);
+    // TODO validate against schema
+    // noinspection JSUnusedGlobalSymbols
+    const { config } = await octokit.config.get({
+      owner: payload.repository.owner.login,
+      repo: payload.repository.name,
+      path: ".github/comment-ops.yml",
+      defaults: (configs) => deepmerge.all([defaultConfig, ...configs]),
+    });
+
+    for (const command of commands) {
+      const result = command.enabled(config);
+      await (result.enabled
+        ? command.run(authToken)
+        : reportError(authToken, payload.issue.node_id, result.error));
+    }
+  } catch (error) {
+    logger.error(error);
   }
 }

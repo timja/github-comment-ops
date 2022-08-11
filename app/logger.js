@@ -6,18 +6,28 @@ const container = new winston.Container();
 
 export function getLogger(name) {
   const print = format.printf(
-    ({ level, message, label, timestamp, ...meta }) => {
+    ({ level, message, label, timestamp, stack, ...meta }) => {
+      let response = `${timestamp} [${label}] ${level}: ${message}`;
       if (meta?.user) {
-        return `${timestamp} [${label}] ${level}: [${meta?.user}] [${meta?.id}] ${message}`;
+        response = `${timestamp} [${label}] ${level}: [${meta?.user}] [${meta?.id}] ${message}`;
       }
-      return `${timestamp} [${label}] ${level}: ${message}`;
+
+      if (stack) {
+        response = response += ` - ${stack}`;
+      }
+      return response;
     }
   );
   const useJson = process.env.JSON_PRINT === "true";
   const fmt = useJson ? format.json() : print;
   const level = (process.env.LOG_LEVEL || "INFO").toLowerCase();
 
-  const formats = [format.label({ label: name }), format.timestamp(), fmt];
+  const formats = [
+    format.errors({ stack: true }),
+    format.label({ label: name }),
+    format.timestamp(),
+    fmt,
+  ];
   if (!useJson) {
     formats.unshift(format.colorize());
   }
