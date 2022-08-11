@@ -29,6 +29,15 @@ export class ReopenCommand extends Command {
 
     logger.info(`Re-opening issue ${this.payload.issue.html_url}`);
 
-    await reopenIssue(authToken, sourceRepo, this.payload.issue.node_id);
+    try {
+      await reopenIssue(authToken, sourceRepo, this.payload.issue.node_id);
+    } catch (error) {
+      logger.error(
+        `Failed to reopen issue ${
+          error.errors ? JSON.stringify(error.errors) : ""
+        }`,
+        error
+      );
+    }
   }
 }

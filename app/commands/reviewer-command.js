@@ -36,13 +36,22 @@ export class ReviewerCommand extends Command {
       this.payload.repository.owner.login,
       reviewerMatches
     );
-    await requestReviewers(
-      authToken,
-      this.payload.repository.owner.login,
-      sourceRepo,
-      this.payload.issue.node_id,
-      reviewers.users,
-      reviewers.teams
-    );
+    try {
+      await requestReviewers(
+        authToken,
+        this.payload.repository.owner.login,
+        sourceRepo,
+        this.payload.issue.node_id,
+        reviewers.users,
+        reviewers.teams
+      );
+    } catch (error) {
+      logger.error(
+        `Failed to request reviewer ${
+          error.errors ? JSON.stringify(error.errors) : ""
+        }`,
+        error
+      );
+    }
   }
 }
