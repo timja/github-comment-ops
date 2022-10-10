@@ -23,7 +23,7 @@
     "winston": "^3.8.2"
   },
   "devDependencies": {
-    "@types/jest": "^29.1.1",
+    "@types/jest": "^29.1.2",
     "@types/node": "^18.8.0",
     "eslint": "^8.24.0",
     "eslint-config-prettier": "^8.5.0",
