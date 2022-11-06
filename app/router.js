@@ -11,6 +11,7 @@ import { getCommands } from "./commands.js";
 const OctokitConfig = Octokit.plugin(octoKitConfig);
 
 import { getLogger } from "./logger.js";
+import { extractLabelableId } from "./comment-extractor.js";
 
 const classLogger = getLogger("router");
 
@@ -30,7 +31,7 @@ export async function router(auth, id, payload, verbose) {
   const octokit = new OctokitConfig({ auth: authToken });
 
   try {
-    await addReaction(authToken, payload.comment.node_id, "THUMBS_UP");
+    await addReaction(authToken, getCommentNodeId(payload), "THUMBS_UP");
   } catch (error) {
     logger.error(
       `Failed to add reaction ${
@@ -54,9 +55,17 @@ export async function router(auth, id, payload, verbose) {
       const result = command.enabled(config);
       await (result.enabled
         ? command.run(authToken)
-        : reportError(authToken, payload.issue.node_id, result.error));
+        : reportError(authToken, extractLabelableId(payload), result.error));
     }
   } catch (error) {
     logger.error(error);
   }
+}
+
+function getCommentNodeId(payload) {
+  if (payload.review) {
+    return payload.review.node_id;
+  }
+
+  return payload.comment.node_id;
 }

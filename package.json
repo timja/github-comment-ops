@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "tunnel": "smee --path /api/github/webhooks",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "lint": "eslint . && prettier --check .",
     "lint:fix": "prettier --write . && eslint --fix ."

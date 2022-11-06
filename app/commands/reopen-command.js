@@ -3,6 +3,11 @@ import { reopenEnabled } from "../command-enabled.js";
 import { reopenIssue } from "../github.js";
 import { Command } from "./command.js";
 import { getLogger } from "../logger.js";
+import {
+  extractBody,
+  extractHtmlUrl,
+  extractLabelableId,
+} from "../comment-extractor.js";
 
 const classLogger = getLogger("commands/reopen-command");
 
@@ -12,7 +17,7 @@ export class ReopenCommand extends Command {
   }
 
   matches() {
-    return reopenMatcher(this.payload.comment.body);
+    return reopenMatcher(extractBody(this.payload));
   }
 
   enabled(config) {
@@ -32,10 +37,14 @@ export class ReopenCommand extends Command {
       return;
     }
 
-    logger.info(`Re-opening issue ${this.payload.issue.html_url}`);
+    logger.info(`Re-opening issue ${extractHtmlUrl(this.payload)}`);
 
     try {
-      await reopenIssue(authToken, sourceRepo, this.payload.issue.node_id);
+      await reopenIssue(
+        authToken,
+        sourceRepo,
+        extractLabelableId(this.payload)
+      );
     } catch (error) {
       logger.error(
         `Failed to reopen issue ${

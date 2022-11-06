@@ -4,6 +4,11 @@ import { removeLabel } from "../github.js";
 import { Command } from "./command.js";
 import { extractCommaSeparated } from "../converters.js";
 import { getLogger } from "../logger.js";
+import {
+  extractBody,
+  extractHtmlUrl,
+  extractLabelableId,
+} from "../comment-extractor.js";
 
 const classLogger = getLogger("commands/remove-label-command");
 
@@ -13,7 +18,7 @@ export class RemoveLabelCommand extends Command {
   }
 
   matches() {
-    return removeLabelMatcher(this.payload.comment.body);
+    return removeLabelMatcher(extractBody(this.payload));
   }
 
   enabled(config) {
@@ -31,14 +36,16 @@ export class RemoveLabelCommand extends Command {
     });
 
     logger.info(
-      `Removing label(s) from issue ${this.payload.issue.html_url}, labels ${labels}`
+      `Removing label(s) from issue ${extractHtmlUrl(
+        this.payload
+      )}, labels ${labels}`
     );
     try {
       await removeLabel(
         authToken,
         this.payload.repository.owner.login,
         sourceRepo,
-        this.payload.issue.node_id,
+        extractLabelableId(this.payload),
         labels
       );
     } catch (error) {

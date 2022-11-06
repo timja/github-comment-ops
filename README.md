@@ -54,6 +54,8 @@ Run `smee --path /api/github/webhooks` and point your webhook to the smee url th
 
 The application runs on port 3000 by default, this can be customized with the `PORT` environment variable.
 
+You can also use the npm script `npm run tunnel` which will run smee for you.
+
 ### Chart deployment
 
 You can deploy this application to Kubernetes with the helm chart included in this repo:
@@ -69,6 +71,7 @@ See more in the [chart README](charts/github-comment-ops/README.md)
 
 - `GITHUB_APP_ID`
 - `GITHUB_APP_PRIVATE_KEY`
+  - Either the private key as a string or a file path prefixed by `file:`, e.g. `file:my-key.pem`
 - `WEBHOOK_SECRET`
 
 ## Supported commands

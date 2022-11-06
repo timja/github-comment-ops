@@ -3,6 +3,11 @@ import { closeMatcher } from "../matchers.js";
 import { closeEnabled } from "../command-enabled.js";
 import { closeIssue } from "../github.js";
 import { getLogger } from "../logger.js";
+import {
+  extractBody,
+  extractHtmlUrl,
+  extractLabelableId,
+} from "../comment-extractor.js";
 
 const classLogger = getLogger("commands/close-command");
 
@@ -12,7 +17,7 @@ export class CloseCommand extends Command {
   }
 
   matches() {
-    return closeMatcher(this.payload.comment.body);
+    return closeMatcher(extractBody(this.payload));
   }
 
   enabled(config) {
@@ -38,13 +43,13 @@ export class CloseCommand extends Command {
     }
 
     logger.info(
-      `Closing issue ${this.payload.issue.html_url}, reason: ${reason}`
+      `Closing issue ${extractHtmlUrl(this.payload)}, reason: ${reason}`
     );
     try {
       await closeIssue(
         authToken,
         sourceRepo,
-        this.payload.issue.node_id,
+        extractLabelableId(this.payload),
         reason
       );
     } catch (error) {
