@@ -4,6 +4,11 @@ import { requestReviewers } from "../github.js";
 import { Command } from "./command.js";
 import { extractUsersAndTeams } from "../converters.js";
 import { getLogger } from "../logger.js";
+import {
+  extractBody,
+  extractHtmlUrl,
+  extractLabelableId,
+} from "../comment-extractor.js";
 
 const classLogger = getLogger("commands/reviewer-command");
 
@@ -13,7 +18,7 @@ export class ReviewerCommand extends Command {
   }
 
   matches() {
-    return reviewerMatcher(this.payload.comment.body);
+    return reviewerMatcher(extractBody(this.payload));
   }
 
   enabled(config) {
@@ -30,7 +35,9 @@ export class ReviewerCommand extends Command {
     });
 
     logger.info(
-      `Requesting review for ${reviewerMatches} at ${this.payload.issue.html_url}`
+      `Requesting review for ${reviewerMatches} at ${extractHtmlUrl(
+        this.payload
+      )}`
     );
     const reviewers = extractUsersAndTeams(
       this.payload.repository.owner.login,
@@ -41,7 +48,7 @@ export class ReviewerCommand extends Command {
         authToken,
         this.payload.repository.owner.login,
         sourceRepo,
-        this.payload.issue.node_id,
+        extractLabelableId(this.payload),
         reviewers.users,
         reviewers.teams
       );

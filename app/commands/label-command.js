@@ -5,6 +5,11 @@ import { Command } from "./command.js";
 import { extractCommaSeparated } from "../converters.js";
 
 import { getLogger } from "../logger.js";
+import {
+  extractBody,
+  extractHtmlUrl,
+  extractLabelableId,
+} from "../comment-extractor.js";
 
 const classLogger = getLogger("commands/label-command");
 
@@ -14,7 +19,7 @@ export class LabelCommand extends Command {
   }
 
   matches() {
-    return labelMatcher(this.payload.comment.body);
+    return labelMatcher(extractBody(this.payload));
   }
 
   enabled(config) {
@@ -32,14 +37,14 @@ export class LabelCommand extends Command {
     });
 
     logger.info(
-      `Labeling issue ${this.payload.issue.html_url} with labels ${labels}`
+      `Labeling issue ${extractHtmlUrl(this.payload)} with labels ${labels}`
     );
     try {
       await addLabel(
         authToken,
         this.payload.repository.owner.login,
         sourceRepo,
-        this.payload.issue.node_id,
+        extractLabelableId(this.payload),
         labels
       );
     } catch (error) {

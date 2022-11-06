@@ -3,6 +3,11 @@ import { transferEnabled } from "../command-enabled.js";
 import { transferIssue } from "../github.js";
 import { Command } from "./command.js";
 import { getLogger } from "../logger.js";
+import {
+  extractBody,
+  extractHtmlUrl,
+  extractLabelableId,
+} from "../comment-extractor.js";
 
 const classLogger = getLogger("commands/transfer-command");
 
@@ -12,7 +17,7 @@ export class TransferCommand extends Command {
   }
 
   matches() {
-    return transferMatcher(this.payload.comment.body);
+    return transferMatcher(extractBody(this.payload));
   }
 
   enabled(config) {
@@ -29,7 +34,7 @@ export class TransferCommand extends Command {
     });
 
     logger.info(
-      `Transferring issue ${this.payload.issue.html_url} to repo ${targetRepo}`
+      `Transferring issue ${extractHtmlUrl(this.payload)} to repo ${targetRepo}`
     );
     try {
       await transferIssue(
@@ -37,7 +42,7 @@ export class TransferCommand extends Command {
         this.payload.repository.owner.login,
         sourceRepo,
         targetRepo,
-        this.payload.issue.node_id
+        extractLabelableId(this.payload)
       );
     } catch (error) {
       logger.error(
