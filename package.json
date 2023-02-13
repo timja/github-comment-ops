@@ -20,7 +20,7 @@
     "@octokit/webhooks": "^10.7.0",
     "@probot/octokit-plugin-config": "^1.1.6",
     "deepmerge": "^4.3.0",
-    "logform": "^2.4.2",
+    "logform": "^2.5.1",
     "winston": "^3.8.2"
   },
   "devDependencies": {
