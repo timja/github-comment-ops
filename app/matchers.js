@@ -3,7 +3,9 @@ export function transferMatcher(text) {
 }
 
 export function closeMatcher(text) {
-  return text.match(/(?:^| | \r\n|\n)\/close (not-planned)|\/close/);
+  return text.match(
+    /(?:^| | \r\n|\n)\/close (not-planned)|(?:^| | \r\n|\n)\/close/
+  );
 }
 
 export function reopenMatcher(text) {
