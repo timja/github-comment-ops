@@ -58,6 +58,11 @@ describe("matchers", () => {
       expect(result).toBeTruthy();
       expect(result[1]).toBeUndefined();
     });
+    test("does not match something/close", () => {
+      const result = closeMatcher("something/close");
+
+      expect(result).toBeFalsy();
+    });
 
     test("matches /close not-planned", () => {
       const result = closeMatcher("/close not-planned");

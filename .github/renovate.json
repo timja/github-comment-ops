@@ -6,8 +6,6 @@
     "schedule:earlyMondays"
   ],
   "automerge": true,
-  "labels": [
-    "dependencies"
-  ],
+  "labels": ["dependencies"],
   "rebaseWhen": "conflicted"
 }
