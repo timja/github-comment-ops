@@ -60,7 +60,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@d9cd5b1c23aaf8cb31bb09141028215828364bbb
+        uses: aquasecurity/trivy-action@97646fedde05bcd0961217c60b50e23f721e7ec7
         with:
           image-ref: ${{ steps.meta.outputs.tags }}
           format: "sarif"
