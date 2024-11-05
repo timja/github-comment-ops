@@ -18,7 +18,7 @@
     "@octokit/core": "^4.2.0",
     "@octokit/graphql": "^5.0.5",
     "@octokit/webhooks": "^10.7.0",
-    "@probot/octokit-plugin-config": "^1.1.6",
+    "@probot/octokit-plugin-config": "^3.0.0",
     "deepmerge": "^4.3.0",
     "logform": "^2.5.1",
     "winston": "^3.8.2"
