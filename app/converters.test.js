@@ -13,7 +13,7 @@ describe("converters", () => {
     test("user and team", () => {
       const converted = extractUsersAndTeams(
         "test-org",
-        "@reviewer1,@test-org/team-1"
+        "@reviewer1,@test-org/team-1",
       );
 
       expect(converted).toEqual({
@@ -24,7 +24,7 @@ describe("converters", () => {
     test("multiple users and teams", () => {
       const converted = extractUsersAndTeams(
         "test-org",
-        "@reviewer1,@test-org/team-1,@reviewer2,@test-org/team-2"
+        "@reviewer1,@test-org/team-1,@reviewer2,@test-org/team-2",
       );
 
       expect(converted).toEqual({
@@ -35,7 +35,7 @@ describe("converters", () => {
     test("space separated users and teams", () => {
       const converted = extractUsersAndTeams(
         "test-org",
-        "@reviewer1 @test-org/team-1 @reviewer2 @test-org/team-2"
+        "@reviewer1 @test-org/team-1 @reviewer2 @test-org/team-2",
       );
 
       expect(converted).toEqual({
@@ -46,7 +46,7 @@ describe("converters", () => {
     test("space and comma separated users and teams", () => {
       const converted = extractUsersAndTeams(
         "test-org",
-        "@reviewer1 @test-org/team-1,@reviewer2 @test-org/team-2"
+        "@reviewer1 @test-org/team-1,@reviewer2 @test-org/team-2",
       );
 
       expect(converted).toEqual({
@@ -57,7 +57,7 @@ describe("converters", () => {
     test("remove empty entry in comma separated users and teams", () => {
       const converted = extractUsersAndTeams(
         "test-org",
-        "@reviewer1,@test-org/team-1,,@reviewer2,@test-org/team-2"
+        "@reviewer1,@test-org/team-1,,@reviewer2,@test-org/team-2",
       );
 
       expect(converted).toEqual({
@@ -68,7 +68,7 @@ describe("converters", () => {
     test("remove empty string entry in comma separated users and teams", () => {
       const converted = extractUsersAndTeams(
         "test-org",
-        "@reviewer1,@test-org/team-1, ,@reviewer2,@test-org/team-2"
+        "@reviewer1,@test-org/team-1, ,@reviewer2,@test-org/team-2",
       );
 
       expect(converted).toEqual({

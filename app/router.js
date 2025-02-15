@@ -39,7 +39,7 @@ export async function router(auth, id, payload, verbose) {
       `Failed to add reaction ${
         error.errors ? JSON.stringify(error.errors) : ""
       }`,
-      error
+      error,
     );
   }
 

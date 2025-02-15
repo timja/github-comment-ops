@@ -34,7 +34,7 @@ export class TransferCommand extends Command {
     });
 
     logger.info(
-      `Transferring issue ${extractHtmlUrl(this.payload)} to repo ${targetRepo}`
+      `Transferring issue ${extractHtmlUrl(this.payload)} to repo ${targetRepo}`,
     );
     try {
       await transferIssue(
@@ -42,14 +42,14 @@ export class TransferCommand extends Command {
         this.payload.repository.owner.login,
         sourceRepo,
         targetRepo,
-        extractLabelableId(this.payload)
+        extractLabelableId(this.payload),
       );
     } catch (error) {
       logger.error(
         `Failed to transfer issue ${
           error.errors ? JSON.stringify(error.errors) : ""
         }`,
-        error
+        error,
       );
     }
   }

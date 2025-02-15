@@ -36,12 +36,12 @@ export class ReviewerCommand extends Command {
 
     logger.info(
       `Requesting review for ${reviewerMatches} at ${extractHtmlUrl(
-        this.payload
-      )}`
+        this.payload,
+      )}`,
     );
     const reviewers = extractUsersAndTeams(
       this.payload.repository.owner.login,
-      reviewerMatches
+      reviewerMatches,
     );
     try {
       await requestReviewers(
@@ -50,14 +50,14 @@ export class ReviewerCommand extends Command {
         sourceRepo,
         extractLabelableId(this.payload),
         reviewers.users,
-        reviewers.teams
+        reviewers.teams,
       );
     } catch (error) {
       logger.error(
         `Failed to request reviewer ${
           error.errors ? JSON.stringify(error.errors) : ""
         }`,
-        error
+        error,
       );
     }
   }

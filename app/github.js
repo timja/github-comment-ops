@@ -3,8 +3,8 @@ import { graphql } from "@octokit/graphql";
 async function convertLabelsToIds(labels, token, login, repository) {
   const convertedLabels = await Promise.all(
     labels.map(
-      async (label) => await labelNameToId(token, login, repository, label)
-    )
+      async (label) => await labelNameToId(token, login, repository, label),
+    ),
   );
 
   const invalidLabels = convertedLabels
@@ -22,7 +22,7 @@ export async function addLabel(token, login, repository, labelableId, labels) {
     labels,
     token,
     login,
-    repository
+    repository,
   );
 
   await graphql(
@@ -41,12 +41,12 @@ export async function addLabel(token, login, repository, labelableId, labels) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 
   if (invalidLabels.length > 0) {
     const comment = `I wasn't able to add the following labels: ${invalidLabels.join(
-      ","
+      ",",
     )}
 
 Check that [the label exists](https://github.com/${login}/${repository}/labels) and is spelt right then try again.
@@ -76,7 +76,7 @@ async function labelNameToId(token, login, repository, labelName) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 
   if (!result.repositoryOwner.repository.label) {
@@ -96,13 +96,13 @@ export async function removeLabel(
   login,
   repository,
   labelableId,
-  labels
+  labels,
 ) {
   const { invalidLabels, labelIds } = await convertLabelsToIds(
     labels,
     token,
     login,
-    repository
+    repository,
   );
 
   await graphql(
@@ -121,12 +121,12 @@ export async function removeLabel(
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 
   if (invalidLabels.length > 0) {
     const comment = `I wasn't able to remove the following labels: ${invalidLabels.join(
-      ","
+      ",",
     )}
 
 Check that [the label exists](https://github.com/${login}/${repository}/labels) and is spelt right then try again.
@@ -152,7 +152,7 @@ async function lookupUser(token, username, originalUser) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 
   if (!result.repositoryOwner) {
@@ -184,7 +184,7 @@ async function lookupTeam(token, organization, teamName, originalTeamName) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 
   if (!result.organization.team) {
@@ -219,7 +219,7 @@ export async function addReaction(token, subjectId, content) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 }
 
@@ -242,7 +242,7 @@ export async function reportError(token, subjectId, comment) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 }
 
@@ -262,7 +262,7 @@ export async function reopenIssue(token, sourceRepo, issueId) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 }
 
@@ -272,7 +272,7 @@ export async function requestReviewers(
   sourceRepo,
   issueId,
   users,
-  teams
+  teams,
 ) {
   const convertedUsers = await Promise.all(
     users
@@ -284,8 +284,8 @@ export async function requestReviewers(
       })
       .map(
         async (result) =>
-          await lookupUser(token, result.user, result.original_user)
-      )
+          await lookupUser(token, result.user, result.original_user),
+      ),
   );
 
   const invalidUsers = convertedUsers
@@ -310,9 +310,9 @@ export async function requestReviewers(
             token,
             organization,
             result.team,
-            result.original_team
-          )
-      )
+            result.original_team,
+          ),
+      ),
   );
 
   const invalidTeams = convertedTeams
@@ -347,14 +347,14 @@ export async function requestReviewers(
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 
   if (invalidUsers.length > 0 || invalidTeams.length > 0) {
     const invalidReviewers = [...invalidUsers, ...invalidTeams];
 
     const comment = `I wasn't able to request review for the following reviewer(s): ${invalidReviewers.join(
-      ","
+      ",",
     )}
 
 Check that the reviewer is spelt right and try again.
@@ -381,7 +381,7 @@ export async function closeIssue(token, sourceRepo, issueId, reason) {
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 }
 
@@ -390,7 +390,7 @@ export async function transferIssue(
   owner,
   sourceRepo,
   targetRepo,
-  issueId
+  issueId,
 ) {
   const { target } = await graphql(
     `
@@ -406,7 +406,7 @@ export async function transferIssue(
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 
   await graphql(
@@ -425,6 +425,6 @@ export async function transferIssue(
       headers: {
         authorization: `token ${token}`,
       },
-    }
+    },
   );
 }

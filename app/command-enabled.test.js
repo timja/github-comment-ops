@@ -44,7 +44,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label1"]
+        ["label1"],
       );
 
       expect(sut.enabled).toEqual(true);
@@ -59,7 +59,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label1"]
+        ["label1"],
       );
 
       expect(sut.enabled).toEqual(false);
@@ -75,7 +75,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label1"]
+        ["label1"],
       );
 
       expect(sut.enabled).toEqual(true);
@@ -90,7 +90,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label4"]
+        ["label4"],
       );
 
       expect(sut.enabled).toEqual(false);
@@ -105,7 +105,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label3", "label1", "label2"]
+        ["label3", "label1", "label2"],
       );
 
       expect(sut.enabled).toEqual(true);
@@ -120,7 +120,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label2", "label1", "label5"]
+        ["label2", "label1", "label5"],
       );
 
       expect(sut.enabled).toEqual(false);
@@ -187,7 +187,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label1"]
+        ["label1"],
       );
 
       expect(sut.enabled).toEqual(true);
@@ -202,7 +202,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label1"]
+        ["label1"],
       );
 
       expect(sut.enabled).toEqual(false);
@@ -218,7 +218,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label1"]
+        ["label1"],
       );
 
       expect(sut.enabled).toEqual(true);
@@ -233,7 +233,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label4"]
+        ["label4"],
       );
 
       expect(sut.enabled).toEqual(false);
@@ -248,7 +248,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label3", "label1", "label2"]
+        ["label3", "label1", "label2"],
       );
 
       expect(sut.enabled).toEqual(true);
@@ -263,7 +263,7 @@ describe("command-enabled", () => {
             },
           },
         },
-        ["label2", "label1", "label5"]
+        ["label2", "label1", "label5"],
       );
 
       expect(sut.enabled).toEqual(false);

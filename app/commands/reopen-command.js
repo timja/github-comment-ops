@@ -43,14 +43,14 @@ export class ReopenCommand extends Command {
       await reopenIssue(
         authToken,
         sourceRepo,
-        extractLabelableId(this.payload)
+        extractLabelableId(this.payload),
       );
     } catch (error) {
       logger.error(
         `Failed to reopen issue ${
           error.errors ? JSON.stringify(error.errors) : ""
         }`,
-        error
+        error,
       );
     }
   }

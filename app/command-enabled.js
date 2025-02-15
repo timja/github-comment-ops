@@ -32,7 +32,7 @@ export function labelEnabled(config, labels) {
     return {
       enabled: false,
       error: `${labels} doesn't match the allowed labels \`${labelConfig.allowedLabels.join(
-        ","
+        ",",
       )}\``,
     };
   }
@@ -70,7 +70,7 @@ export function removeLabelEnabled(config, labels) {
     return {
       enabled: false,
       error: `${labels} doesn't match the allowed labels \`${labelConfig.allowedLabels.join(
-        ","
+        ",",
       )}\``,
     };
   }

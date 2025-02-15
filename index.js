@@ -59,7 +59,7 @@ createServer(
       response.write("For webhooks POST to path /api/github/webhooks\n");
       response.end();
     },
-  })
+  }),
 ).listen(port, () => {
   logger.info(`Listening for events on port ${port}`);
 });
