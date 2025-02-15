@@ -19,7 +19,7 @@ export default [
   ...compat.extends(
     "eslint:recommended",
     "plugin:prettier/recommended",
-    "plugin:unicorn/recommended"
+    "plugin:unicorn/recommended",
   ),
   {
     languageOptions: {
