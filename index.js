@@ -38,6 +38,15 @@ webhooks.on("issue_comment.created", async ({ id, payload }) => {
   await router(auth, id, payload, verbose);
 });
 
+webhooks.on("pull_request", async ({ id, payload }) => {
+  // don't trigger multiple times for the same action
+  if (payload.action === "labeled" || payload.action === "unlabeled") {
+    return;
+  }
+
+  await router(auth, id, payload, verbose);
+});
+
 webhooks.on("pull_request_review", async ({ id, payload }) => {
   await router(auth, id, payload, verbose);
 });

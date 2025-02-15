@@ -22,7 +22,9 @@ export async function router(auth, id, payload, verbose) {
 
   if (commands.length === 0) {
     if (verbose) {
-      logger.info(`No match for "${payload.comment.body}"`);
+      logger.info(
+        `No match for "${payload?.pull_request?.body || payload.comment.body}"`
+      );
     }
     return;
   }
@@ -65,6 +67,10 @@ export async function router(auth, id, payload, verbose) {
 function getCommentNodeId(payload) {
   if (payload.review) {
     return payload.review.node_id;
+  }
+
+  if (payload.pull_request) {
+    return payload.pull_request.node_id;
   }
 
   return payload.comment.node_id;
