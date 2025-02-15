@@ -37,8 +37,8 @@ export class RemoveLabelCommand extends Command {
 
     logger.info(
       `Removing label(s) from issue ${extractHtmlUrl(
-        this.payload
-      )}, labels ${labels}`
+        this.payload,
+      )}, labels ${labels}`,
     );
     try {
       await removeLabel(
@@ -46,14 +46,14 @@ export class RemoveLabelCommand extends Command {
         this.payload.repository.owner.login,
         sourceRepo,
         extractLabelableId(this.payload),
-        labels
+        labels,
       );
     } catch (error) {
       logger.error(
         `Failed to remove label ${
           error.errors ? JSON.stringify(error.errors) : ""
         }`,
-        error
+        error,
       );
     }
   }

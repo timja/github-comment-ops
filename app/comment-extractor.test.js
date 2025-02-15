@@ -12,7 +12,7 @@ describe("extractors", () => {
           review: {
             body: "review body",
           },
-        })
+        }),
       ).toEqual("review body");
     });
 
@@ -22,7 +22,7 @@ describe("extractors", () => {
           comment: {
             body: "comment body",
           },
-        })
+        }),
       ).toEqual("comment body");
     });
   });
@@ -37,7 +37,7 @@ describe("extractors", () => {
           pull_request: {
             html_url: "https://github.com/some-org/some-repo/pull/1",
           },
-        })
+        }),
       ).toEqual("https://github.com/some-org/some-repo/pull/1");
     });
 
@@ -47,7 +47,7 @@ describe("extractors", () => {
           issue: {
             html_url: "https://github.com/some-org/some-repo/issue/1",
           },
-        })
+        }),
       ).toEqual("https://github.com/some-org/some-repo/issue/1");
     });
   });
@@ -62,7 +62,7 @@ describe("extractors", () => {
           pull_request: {
             node_id: "PR_aaaaaa",
           },
-        })
+        }),
       ).toEqual("PR_aaaaaa");
     });
 
@@ -72,7 +72,7 @@ describe("extractors", () => {
           issue: {
             node_id: "PR_abcdefgh",
           },
-        })
+        }),
       ).toEqual("PR_abcdefgh");
     });
   });

@@ -16,7 +16,7 @@ export function getLogger(name) {
         response = response += ` - ${stack}`;
       }
       return response;
-    }
+    },
   );
   const useJson = process.env.JSON_PRINT === "true";
   const fmt = useJson ? format.json() : print;

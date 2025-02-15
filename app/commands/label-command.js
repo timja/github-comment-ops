@@ -37,7 +37,7 @@ export class LabelCommand extends Command {
     });
 
     logger.info(
-      `Labeling issue ${extractHtmlUrl(this.payload)} with labels ${labels}`
+      `Labeling issue ${extractHtmlUrl(this.payload)} with labels ${labels}`,
     );
     try {
       await addLabel(
@@ -45,14 +45,14 @@ export class LabelCommand extends Command {
         this.payload.repository.owner.login,
         sourceRepo,
         extractLabelableId(this.payload),
-        labels
+        labels,
       );
     } catch (error) {
       logger.error(
         `Failed to add label ${
           error.errors ? JSON.stringify(error.errors) : ""
         }`,
-        error
+        error,
       );
     }
   }

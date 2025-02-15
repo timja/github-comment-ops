@@ -43,21 +43,21 @@ export class CloseCommand extends Command {
     }
 
     logger.info(
-      `Closing issue ${extractHtmlUrl(this.payload)}, reason: ${reason}`
+      `Closing issue ${extractHtmlUrl(this.payload)}, reason: ${reason}`,
     );
     try {
       await closeIssue(
         authToken,
         sourceRepo,
         extractLabelableId(this.payload),
-        reason
+        reason,
       );
     } catch (error) {
       logger.error(
         `Failed to close issue ${
           error.errors ? JSON.stringify(error.errors) : ""
         }`,
-        error
+        error,
       );
     }
   }

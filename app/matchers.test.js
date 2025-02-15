@@ -33,7 +33,7 @@ describe("matchers", () => {
     });
     test("does not match in the middle of a string", () => {
       const result = transferMatcher(
-        "hello world/transfer github-comment-ops\nasda"
+        "hello world/transfer github-comment-ops\nasda",
       );
 
       expect(result).toBeFalsy();
@@ -160,7 +160,7 @@ describe("matchers", () => {
     });
     test("matches /remove-label label1,label2 with spaces,label3", () => {
       const result = removeLabelMatcher(
-        "/remove-label label1,label 2 with spaces,label3"
+        "/remove-label label1,label 2 with spaces,label3",
       );
 
       expect(result).toBeTruthy();
@@ -174,7 +174,7 @@ describe("matchers", () => {
     });
     test("does not match in the middle of a string", () => {
       const result = removeLabelMatcher(
-        "something cool/remove-label label1\nasda"
+        "something cool/remove-label label1\nasda",
       );
 
       expect(result).toBeFalsy();
@@ -213,7 +213,7 @@ describe("matchers", () => {
     });
     test("matches /reviewer reviewer1,@reviewer2,@org/team", () => {
       const result = reviewerMatcher(
-        "/reviewer reviewer1,@reviewer2,@org/team"
+        "/reviewer reviewer1,@reviewer2,@org/team",
       );
 
       expect(result).toBeTruthy();
@@ -221,7 +221,7 @@ describe("matchers", () => {
     });
     test("matches with space separator /reviewer reviewer1 @reviewer2 @org/team", () => {
       const result = reviewerMatcher(
-        "/reviewer reviewer1 @reviewer2 @org/team"
+        "/reviewer reviewer1 @reviewer2 @org/team",
       );
 
       expect(result).toBeTruthy();

@@ -23,7 +23,7 @@ export async function router(auth, id, payload, verbose) {
   if (commands.length === 0) {
     if (verbose) {
       logger.info(
-        `No match for "${payload?.pull_request?.body || payload.comment.body}"`
+        `No match for "${payload?.pull_request?.body || payload.comment.body}"`,
       );
     }
     return;
@@ -39,7 +39,7 @@ export async function router(auth, id, payload, verbose) {
       `Failed to add reaction ${
         error.errors ? JSON.stringify(error.errors) : ""
       }`,
-      error
+      error,
     );
   }
 

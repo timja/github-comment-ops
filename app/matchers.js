@@ -4,7 +4,7 @@ export function transferMatcher(text) {
 
 export function closeMatcher(text) {
   return text.match(
-    /(?:^| | \r\n|\n)\/close (not-planned)|(?:^| | \r\n|\n)\/close/
+    /(?:^| | \r\n|\n)\/close (not-planned)|(?:^| | \r\n|\n)\/close/,
   );
 }
 
