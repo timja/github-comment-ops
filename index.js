@@ -51,15 +51,16 @@ webhooks.on("pull_request_review", async ({ id, payload }) => {
   await router(auth, id, payload, verbose);
 });
 
-createServer(
-  createNodeMiddleware(webhooks, {
-    // Return 200 for health probes
-    onUnhandledRequest: (request, response) => {
-      response.setHeader("Content-Type", "text/plain");
-      response.write("For webhooks POST to path /api/github/webhooks\n");
-      response.end();
-    },
-  }),
-).listen(port, () => {
+const middleware = createNodeMiddleware(webhooks);
+
+createServer(async (request, response) => {
+  // `middleware` returns `false` when `request` is unhandled (beyond `/api/github`)
+  if (await middleware(request, response)) {
+    return;
+  }
+  response.setHeader("Content-Type", "text/plain");
+  response.write("For webhooks POST to path /api/github/webhooks\n");
+  response.end();
+}).listen(port, () => {
   logger.info(`Listening for events on port ${port}`);
 });
