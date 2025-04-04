@@ -9,6 +9,10 @@ function notEnabled(command) {
   };
 }
 
+function trimLabels(labels) {
+  return labels.map(it => it.trim());
+}
+
 export function transferEnabled(config) {
   if (!config.commands.transfer.enabled) {
     return notEnabled("transfer");
@@ -24,14 +28,15 @@ export function labelEnabled(config, labels) {
     return notEnabled("label");
   }
 
+  const allowedLabels = trimLabels(labelConfig.allowedLabels);
   if (
     // if length is = 0 then all labels are allowed
-    labelConfig.allowedLabels.length > 0 &&
-    !labels.every((label) => labelConfig.allowedLabels.includes(label))
+    allowedLabels.length > 0 &&
+    !labels.every((label) => allowedLabels.includes(label))
   ) {
     return {
       enabled: false,
-      error: `${labels} doesn't match the allowed labels \`${labelConfig.allowedLabels.join(
+      error: `${labels} doesn't match the allowed labels \`${allowedLabels.join(
         ",",
       )}\``,
     };
@@ -62,14 +67,15 @@ export function removeLabelEnabled(config, labels) {
     return notEnabled("remove-label");
   }
 
+  const allowedLabels = trimLabels(labelConfig.allowedLabels);
   if (
     // if length is = 0 then all labels are allowed
-    labelConfig.allowedLabels.length > 0 &&
-    !labels.every((label) => labelConfig.allowedLabels.includes(label))
+    allowedLabels > 0 &&
+    !labels.every((label) => allowedLabels.includes(label))
   ) {
     return {
       enabled: false,
-      error: `${labels} doesn't match the allowed labels \`${labelConfig.allowedLabels.join(
+      error: `${labels} doesn't match the allowed labels \`${allowedLabels.join(
         ",",
       )}\``,
     };

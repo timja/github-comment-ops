@@ -94,5 +94,10 @@ describe("converters", () => {
 
       expect(labels).toEqual(expect.arrayContaining(actual));
     });
+    test("remove trailing whitespace in split", () => {
+      const labels = extractCommaSeparated("label1, label2");
+
+      expect(labels).toEqual(expect.arrayContaining(actual));
+    });
   });
 });
