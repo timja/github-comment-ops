@@ -10,7 +10,7 @@ function notEnabled(command) {
 }
 
 function trimLabels(labels) {
-  return labels.map(it => it.trim());
+  return labels.map((it) => it.trim());
 }
 
 export function transferEnabled(config) {
