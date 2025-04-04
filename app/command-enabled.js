@@ -70,7 +70,7 @@ export function removeLabelEnabled(config, labels) {
   const allowedLabels = trimLabels(labelConfig.allowedLabels);
   if (
     // if length is = 0 then all labels are allowed
-    allowedLabels > 0 &&
+    allowedLabels.length > 0 &&
     !labels.every((label) => allowedLabels.includes(label))
   ) {
     return {
