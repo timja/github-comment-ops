@@ -127,6 +127,22 @@ describe("command-enabled", () => {
     });
   });
 
+  test("is enabled when label is in allowedLabels with blanks", () => {
+    const sut = labelEnabled(
+      {
+        commands: {
+          label: {
+            enabled: true,
+            allowedLabels: ["label2", "label1 "],
+          },
+        },
+      },
+      ["label1"],
+    );
+
+    expect(sut.enabled).toEqual(true);
+  });
+
   describe("closeEnabled", () => {
     test("is enabled when config is enabled", () => {
       const sut = closeEnabled({
