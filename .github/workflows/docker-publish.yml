@@ -32,7 +32,7 @@ jobs:
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.8.2
+        uses: sigstore/cosign-installer@v3.10.1
         if: github.event_name != 'pull_request'
 
       - name: Set up QEMU
