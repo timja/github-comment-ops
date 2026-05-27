@@ -78,7 +78,7 @@ See more in the [chart README](charts/github-comment-ops/README.md)
 
 ### /close
 
-Closes the current issue. `not-planned` can be passed as argument as closure reason.
+Closes the current issue. `not-planned` can be passed as the closure reason, e.g. `/close not-planned`.
 
 #### Permissions required
 
