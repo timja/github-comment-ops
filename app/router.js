@@ -1,5 +1,6 @@
 import { addReaction, reportError } from "./github.js";
 import { getAuthToken } from "./auth.js";
+import { validateConfig } from "./config-schema.js";
 import { defaultConfig } from "./default-config.js";
 
 import { Octokit } from "@octokit/core";
@@ -44,7 +45,6 @@ export async function router(auth, id, payload, verbose) {
   }
 
   try {
-    // TODO validate against schema
     // noinspection JSUnusedGlobalSymbols
     const owner = payload.repository.owner.login;
     const repoName = payload.repository.name;
@@ -66,6 +66,7 @@ export async function router(auth, id, payload, verbose) {
 
     // Merge in order: default → org → repo
     const config = mergeConfigs(defaultConfig, orgFiles, repoFiles);
+    validateConfig(config);
 
     for (const command of commands) {
       const result = command.enabled(config);
