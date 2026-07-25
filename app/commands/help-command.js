@@ -7,12 +7,14 @@ import {
   extractHtmlUrl,
   extractLabelableId,
 } from "../comment-extractor.js";
+import { ALL_COMMANDS } from "../commands.js";
 
 const classLogger = getLogger("commands/help-command");
 
-function buildHelpText(allCommandClasses, config) {
-  const rows = allCommandClasses
-    .filter((Cls) => !Cls.configKey || config.commands[Cls.configKey]?.enabled)
+function buildHelpText(config) {
+  const rows = ALL_COMMANDS.filter(
+    (Cls) => !Cls.configKey || config.commands[Cls.configKey]?.enabled,
+  )
     .map(
       (Cls) => `| \`${Cls.prototype.usage}\` | ${Cls.prototype.description} |`,
     )
@@ -22,11 +24,6 @@ function buildHelpText(allCommandClasses, config) {
 }
 
 export class HelpCommand extends Command {
-  constructor(id, payload) {
-    super(id, payload);
-    this.allCommandClasses = [];
-  }
-
   get usage() {
     return "/help";
   }
@@ -57,7 +54,7 @@ export class HelpCommand extends Command {
       await reportError(
         authToken,
         extractLabelableId(this.payload),
-        buildHelpText(this.allCommandClasses, this._config),
+        buildHelpText(this._config),
       );
     } catch (error) {
       logger.error(

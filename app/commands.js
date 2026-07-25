@@ -18,9 +18,5 @@ export const ALL_COMMANDS = [
 
 export function getCommands(id, payload) {
   const commands = ALL_COMMANDS.map((Cls) => new Cls(id, payload));
-  const helpCommand = commands.find((c) => c instanceof HelpCommand);
-  if (helpCommand) {
-    helpCommand.allCommandClasses = ALL_COMMANDS;
-  }
   return commands.filter((command) => command.matches());
 }
