@@ -4,6 +4,7 @@ import { reopenIssue } from "../github.js";
 import { Command } from "./command.js";
 import { getLogger } from "../logger.js";
 import {
+  extractAuthorAssociation,
   extractBody,
   extractHtmlUrl,
   extractLabelableId,
@@ -21,7 +22,7 @@ export class ReopenCommand extends Command {
   }
 
   enabled(config) {
-    return reopenEnabled(config);
+    return reopenEnabled(config, extractAuthorAssociation(this.payload));
   }
 
   async run(authToken) {

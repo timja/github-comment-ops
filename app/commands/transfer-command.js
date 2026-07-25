@@ -4,6 +4,7 @@ import { transferIssue } from "../github.js";
 import { Command } from "./command.js";
 import { getLogger } from "../logger.js";
 import {
+  extractAuthorAssociation,
   extractBody,
   extractHtmlUrl,
   extractLabelableId,
@@ -21,7 +22,7 @@ export class TransferCommand extends Command {
   }
 
   enabled(config) {
-    return transferEnabled(config);
+    return transferEnabled(config, extractAuthorAssociation(this.payload));
   }
 
   async run(authToken) {
