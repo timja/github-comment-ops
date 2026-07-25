@@ -1,5 +1,22 @@
 import { graphql } from "@octokit/graphql";
 
+const committerPermissions = new Set(["WRITE", "MAINTAIN", "ADMIN"]);
+
+function getCollaboratorPermission(repository, username) {
+  const collaborator = repository?.collaborators?.edges?.find(
+    (edge) => edge?.node?.login?.toLowerCase() === username.toLowerCase(),
+  );
+
+  return collaborator?.permission;
+}
+
+export function hasCommitterAccess(sourcePermission, targetPermission) {
+  return (
+    committerPermissions.has(sourcePermission) ||
+    committerPermissions.has(targetPermission)
+  );
+}
+
 async function convertLabelsToIds(labels, token, login, repository) {
   const convertedLabels = await Promise.all(
     labels.map(
@@ -391,23 +408,60 @@ export async function transferIssue(
   sourceRepo,
   targetRepo,
   issueId,
+  username,
 ) {
-  const { target } = await graphql(
+  const { source, target } = await graphql(
     `
-      query ($owner: String!, $targetRepo: String!) {
+      query (
+        $owner: String!
+        $sourceRepo: String!
+        $targetRepo: String!
+        $username: String!
+      ) {
+        source: repository(owner: $owner, name: $sourceRepo) {
+          collaborators(query: $username, first: 1) {
+            edges {
+              permission
+              node {
+                login
+              }
+            }
+          }
+        }
         target: repository(owner: $owner, name: $targetRepo) {
           id
+          collaborators(query: $username, first: 1) {
+            edges {
+              permission
+              node {
+                login
+              }
+            }
+          }
         }
       }
     `,
     {
       owner,
+      sourceRepo,
       targetRepo,
+      username,
       headers: {
         authorization: `token ${token}`,
       },
     },
   );
+
+  if (
+    !hasCommitterAccess(
+      getCollaboratorPermission(source, username),
+      getCollaboratorPermission(target, username),
+    )
+  ) {
+    throw new Error(
+      `User ${username} requires committer access on ${sourceRepo} or ${targetRepo} to transfer issues`,
+    );
+  }
 
   await graphql(
     `

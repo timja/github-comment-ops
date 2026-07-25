@@ -134,6 +134,7 @@ _Note: If a team exists but the team doesn't have read access to the repository 
 ### /transfer <destination_repo>
 
 Transfers a GitHub issue to another repository in the same organization.
+Only users with committer access on either the source or destination repository can use this command.
 
 #### Permissions required
 

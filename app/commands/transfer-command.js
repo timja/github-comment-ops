@@ -43,6 +43,7 @@ export class TransferCommand extends Command {
         sourceRepo,
         targetRepo,
         extractLabelableId(this.payload),
+        this.payload.sender.login,
       );
     } catch (error) {
       logger.error(
