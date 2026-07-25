@@ -5,6 +5,7 @@ import { Command } from "./command.js";
 import { extractCommaSeparated } from "../converters.js";
 import { getLogger } from "../logger.js";
 import {
+  extractAuthorAssociation,
   extractBody,
   extractHtmlUrl,
   extractLabelableId,
@@ -23,7 +24,11 @@ export class RemoveLabelCommand extends Command {
 
   enabled(config) {
     const removeLabels = extractCommaSeparated(this.matches()[1]);
-    return removeLabelEnabled(config, removeLabels);
+    return removeLabelEnabled(
+      config,
+      removeLabels,
+      extractAuthorAssociation(this.payload),
+    );
   }
 
   async run(authToken) {
