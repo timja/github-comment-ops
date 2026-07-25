@@ -13,6 +13,8 @@ import {
 const classLogger = getLogger("commands/reviewer-command");
 
 export class ReviewerCommand extends Command {
+  static configKey = "reviewer";
+
   constructor(id, payload) {
     super(id, payload);
   }

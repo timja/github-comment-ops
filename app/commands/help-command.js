@@ -7,18 +7,24 @@ import {
   extractHtmlUrl,
   extractLabelableId,
 } from "../comment-extractor.js";
-import { TransferCommand } from "./transfer-command.js";
-import { CloseCommand } from "./close-command.js";
-import { ReopenCommand } from "./reopen-command.js";
-import { LabelCommand } from "./label-command.js";
-import { RemoveLabelCommand } from "./remove-label-command.js";
-import { ReviewerCommand } from "./reviewer-command.js";
 
 const classLogger = getLogger("commands/help-command");
+
+function buildHelpText(allCommandClasses, config) {
+  const rows = allCommandClasses
+    .filter((Cls) => !Cls.configKey || config.commands[Cls.configKey]?.enabled)
+    .map(
+      (Cls) => `| \`${Cls.prototype.usage}\` | ${Cls.prototype.description} |`,
+    )
+    .join("\n");
+
+  return `### Available Commands\n\n| Command | Description |\n| ------- | ----------- |\n${rows}`;
+}
 
 export class HelpCommand extends Command {
   constructor(id, payload) {
     super(id, payload);
+    this.allCommandClasses = [];
   }
 
   get usage() {
@@ -33,8 +39,8 @@ export class HelpCommand extends Command {
     return helpMatcher(extractBody(this.payload));
   }
 
-  // eslint-disable-next-line no-unused-vars
   enabled(config) {
+    this._config = config;
     return {
       enabled: true,
     };
@@ -51,7 +57,7 @@ export class HelpCommand extends Command {
       await reportError(
         authToken,
         extractLabelableId(this.payload),
-        buildHelpText(),
+        buildHelpText(this.allCommandClasses, this._config),
       );
     } catch (error) {
       logger.error(
@@ -62,24 +68,4 @@ export class HelpCommand extends Command {
       );
     }
   }
-}
-
-// Defined after HelpCommand so the class is available for inclusion in the list.
-const DOCUMENTED_COMMANDS = [
-  TransferCommand,
-  CloseCommand,
-  ReopenCommand,
-  LabelCommand,
-  RemoveLabelCommand,
-  ReviewerCommand,
-  HelpCommand,
-];
-
-function buildHelpText() {
-  const rows = DOCUMENTED_COMMANDS.map((CommandClass) => {
-    const { usage, description } = CommandClass.prototype;
-    return `| \`${usage}\` | ${description} |`;
-  }).join("\n");
-
-  return `### Available Commands\n\n| Command | Description |\n| ------- | ----------- |\n${rows}`;
 }

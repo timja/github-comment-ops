@@ -13,6 +13,8 @@ import {
 const classLogger = getLogger("commands/remove-label-command");
 
 export class RemoveLabelCommand extends Command {
+  static configKey = "removeLabel";
+
   constructor(id, payload) {
     super(id, payload);
   }

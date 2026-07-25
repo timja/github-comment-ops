@@ -12,6 +12,8 @@ import {
 const classLogger = getLogger("commands/reopen-command");
 
 export class ReopenCommand extends Command {
+  static configKey = "reopen";
+
   constructor(id, payload) {
     super(id, payload);
   }

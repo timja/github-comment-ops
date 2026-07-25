@@ -12,6 +12,8 @@ import {
 const classLogger = getLogger("commands/close-command");
 
 export class CloseCommand extends Command {
+  static configKey = "close";
+
   constructor(id, payload) {
     super(id, payload);
   }

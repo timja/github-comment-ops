@@ -12,6 +12,8 @@ import {
 const classLogger = getLogger("commands/transfer-command");
 
 export class TransferCommand extends Command {
+  static configKey = "transfer";
+
   constructor(id, payload) {
     super(id, payload);
   }
