@@ -4,6 +4,14 @@ export class Command {
     this.payload = payload;
   }
 
+  get usage() {
+    throw new Error("usage must be implemented");
+  }
+
+  get description() {
+    throw new Error("description must be implemented");
+  }
+
   matches() {
     throw new Error("matches() must be implemented");
   }

@@ -18,6 +18,14 @@ export class LabelCommand extends Command {
     super(id, payload);
   }
 
+  get usage() {
+    return "/label <label1,label2>";
+  }
+
+  get description() {
+    return "Add labels to this issue or pull request";
+  }
+
   matches() {
     return labelMatcher(extractBody(this.payload));
   }

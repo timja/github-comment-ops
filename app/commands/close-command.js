@@ -16,6 +16,14 @@ export class CloseCommand extends Command {
     super(id, payload);
   }
 
+  get usage() {
+    return "/close [not-planned]";
+  }
+
+  get description() {
+    return "Close this issue";
+  }
+
   matches() {
     return closeMatcher(extractBody(this.payload));
   }

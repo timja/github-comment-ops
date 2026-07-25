@@ -16,6 +16,14 @@ export class ReopenCommand extends Command {
     super(id, payload);
   }
 
+  get usage() {
+    return "/reopen";
+  }
+
+  get description() {
+    return "Reopen this issue";
+  }
+
   matches() {
     return reopenMatcher(extractBody(this.payload));
   }

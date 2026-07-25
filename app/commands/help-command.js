@@ -7,25 +7,26 @@ import {
   extractHtmlUrl,
   extractLabelableId,
 } from "../comment-extractor.js";
+import { TransferCommand } from "./transfer-command.js";
+import { CloseCommand } from "./close-command.js";
+import { ReopenCommand } from "./reopen-command.js";
+import { LabelCommand } from "./label-command.js";
+import { RemoveLabelCommand } from "./remove-label-command.js";
+import { ReviewerCommand } from "./reviewer-command.js";
 
 const classLogger = getLogger("commands/help-command");
-
-const helpText = `### Available Commands
-
-| Command | Description |
-| ------- | ----------- |
-| \`/label label1,label2\` | Add labels to this issue or pull request |
-| \`/remove-label label1,label2\` | Remove labels from this issue or pull request |
-| \`/close\` | Close this issue |
-| \`/close not-planned\` | Close this issue as not planned |
-| \`/reopen\` | Reopen this issue |
-| \`/reviewer reviewer1,reviewer2\` | Request reviewers for this pull request |
-| \`/transfer repo-name\` | Transfer this issue to another repository |
-| \`/help\` | Show this help message |`;
 
 export class HelpCommand extends Command {
   constructor(id, payload) {
     super(id, payload);
+  }
+
+  get usage() {
+    return "/help";
+  }
+
+  get description() {
+    return "Show available commands";
   }
 
   matches() {
@@ -47,7 +48,11 @@ export class HelpCommand extends Command {
 
     logger.info(`Showing help for ${extractHtmlUrl(this.payload)}`);
     try {
-      await reportError(authToken, extractLabelableId(this.payload), helpText);
+      await reportError(
+        authToken,
+        extractLabelableId(this.payload),
+        buildHelpText(),
+      );
     } catch (error) {
       logger.error(
         `Failed to post help comment ${
@@ -57,4 +62,24 @@ export class HelpCommand extends Command {
       );
     }
   }
+}
+
+// Defined after HelpCommand so the class is available for inclusion in the list.
+const DOCUMENTED_COMMANDS = [
+  TransferCommand,
+  CloseCommand,
+  ReopenCommand,
+  LabelCommand,
+  RemoveLabelCommand,
+  ReviewerCommand,
+  HelpCommand,
+];
+
+function buildHelpText() {
+  const rows = DOCUMENTED_COMMANDS.map((CommandClass) => {
+    const { usage, description } = CommandClass.prototype;
+    return `| \`${usage}\` | ${description} |`;
+  }).join("\n");
+
+  return `### Available Commands\n\n| Command | Description |\n| ------- | ----------- |\n${rows}`;
 }

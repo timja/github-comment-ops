@@ -17,6 +17,14 @@ export class RemoveLabelCommand extends Command {
     super(id, payload);
   }
 
+  get usage() {
+    return "/remove-label <label1,label2>";
+  }
+
+  get description() {
+    return "Remove labels from this issue or pull request";
+  }
+
   matches() {
     return removeLabelMatcher(extractBody(this.payload));
   }

@@ -17,6 +17,14 @@ export class ReviewerCommand extends Command {
     super(id, payload);
   }
 
+  get usage() {
+    return "/reviewer <reviewer1,reviewer2>";
+  }
+
+  get description() {
+    return "Request reviewers for this pull request";
+  }
+
   matches() {
     return reviewerMatcher(extractBody(this.payload));
   }

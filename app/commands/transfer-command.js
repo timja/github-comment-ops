@@ -16,6 +16,14 @@ export class TransferCommand extends Command {
     super(id, payload);
   }
 
+  get usage() {
+    return "/transfer <repo-name>";
+  }
+
+  get description() {
+    return "Transfer this issue to another repository";
+  }
+
   matches() {
     return transferMatcher(extractBody(this.payload));
   }
