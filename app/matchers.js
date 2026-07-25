@@ -24,3 +24,7 @@ export function removeLabelMatcher(text) {
 export function reviewerMatcher(text) {
   return text.match(/(?:^| | \r\n|\n)\/reviewers? ([ /@A-Za-z\d-,]+)/);
 }
+
+export function helpMatcher(text) {
+  return text.match(/(?:^| | \r\n|\n)\/help/);
+}

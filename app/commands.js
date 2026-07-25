@@ -4,6 +4,7 @@ import { ReopenCommand } from "./commands/reopen-command.js";
 import { LabelCommand } from "./commands/label-command.js";
 import { RemoveLabelCommand } from "./commands/remove-label-command.js";
 import { ReviewerCommand } from "./commands/reviewer-command.js";
+import { HelpCommand } from "./commands/help-command.js";
 
 export function getCommands(id, payload) {
   const commands = [
@@ -13,6 +14,7 @@ export function getCommands(id, payload) {
     new LabelCommand(id, payload),
     new RemoveLabelCommand(id, payload),
     new ReviewerCommand(id, payload),
+    new HelpCommand(id, payload),
   ];
   return commands.filter((command) => command.matches());
 }

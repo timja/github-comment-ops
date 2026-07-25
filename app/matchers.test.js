@@ -1,5 +1,6 @@
 import {
   closeMatcher,
+  helpMatcher,
   labelMatcher,
   removeLabelMatcher,
   reopenMatcher,
@@ -238,6 +239,29 @@ describe("matchers", () => {
       const result = reviewerMatcher("something cool/reviewer reviewer1\nasda");
 
       expect(result).toBeFalsy();
+    });
+  });
+
+  describe("help", () => {
+    test("matches /help", () => {
+      const result = helpMatcher("/help");
+
+      expect(result).toBeTruthy();
+    });
+    test("does not match input without /help", () => {
+      const result = helpMatcher("help");
+
+      expect(result).toBeFalsy();
+    });
+    test("does not match in the middle of a string", () => {
+      const result = helpMatcher("something/help");
+
+      expect(result).toBeFalsy();
+    });
+    test("matches /help at the start of a new line", () => {
+      const result = helpMatcher("some text\n/help");
+
+      expect(result).toBeTruthy();
     });
   });
 });
