@@ -13,8 +13,18 @@ import {
 const classLogger = getLogger("commands/remove-label-command");
 
 export class RemoveLabelCommand extends Command {
+  static configKey = "removeLabel";
+
   constructor(id, payload) {
     super(id, payload);
+  }
+
+  get usage() {
+    return "/remove-label <label1,label2>";
+  }
+
+  get description() {
+    return "Remove labels from this issue or pull request";
   }
 
   matches() {

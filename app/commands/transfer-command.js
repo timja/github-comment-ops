@@ -12,8 +12,18 @@ import {
 const classLogger = getLogger("commands/transfer-command");
 
 export class TransferCommand extends Command {
+  static configKey = "transfer";
+
   constructor(id, payload) {
     super(id, payload);
+  }
+
+  get usage() {
+    return "/transfer <repo-name>";
+  }
+
+  get description() {
+    return "Transfer this issue to another repository";
   }
 
   matches() {

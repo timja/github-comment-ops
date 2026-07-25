@@ -14,8 +14,18 @@ import {
 const classLogger = getLogger("commands/label-command");
 
 export class LabelCommand extends Command {
+  static configKey = "label";
+
   constructor(id, payload) {
     super(id, payload);
+  }
+
+  get usage() {
+    return "/label <label1,label2>";
+  }
+
+  get description() {
+    return "Add labels to this issue or pull request";
   }
 
   matches() {

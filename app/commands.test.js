@@ -29,4 +29,14 @@ describe("commands", () => {
 
     expect(commands).toHaveLength(2);
   });
+
+  test("getCommands matches /help command", () => {
+    const commands = getCommands("any", {
+      comment: {
+        body: "/help",
+      },
+    });
+
+    expect(commands).toHaveLength(1);
+  });
 });

@@ -13,8 +13,18 @@ import {
 const classLogger = getLogger("commands/reviewer-command");
 
 export class ReviewerCommand extends Command {
+  static configKey = "reviewer";
+
   constructor(id, payload) {
     super(id, payload);
+  }
+
+  get usage() {
+    return "/reviewer <reviewer1,reviewer2>";
+  }
+
+  get description() {
+    return "Request reviewers for this pull request";
   }
 
   matches() {
