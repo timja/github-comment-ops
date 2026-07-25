@@ -1,5 +1,6 @@
 import { addReaction, reportError } from "./github.js";
 import { getAuthToken } from "./auth.js";
+import { validateConfig } from "./config-schema.js";
 import { defaultConfig } from "./default-config.js";
 
 import { Octokit } from "@octokit/core";
@@ -44,14 +45,13 @@ export async function router(auth, id, payload, verbose) {
   }
 
   try {
-    // TODO validate against schema
-    // noinspection JSUnusedGlobalSymbols
     const { config } = await octokit.config.get({
       owner: payload.repository.owner.login,
       repo: payload.repository.name,
       path: ".github/comment-ops.yml",
       defaults: (configs) => deepmerge.all([defaultConfig, ...configs]),
     });
+    validateConfig(config);
 
     for (const command of commands) {
       const result = command.enabled(config);
