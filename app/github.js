@@ -1,6 +1,16 @@
 import { graphql } from "@octokit/graphql";
 
 const committerPermissions = new Set(["WRITE", "MAINTAIN", "ADMIN"]);
+const triagePermission = "TRIAGE";
+
+function getTransferAuthorizationConfig(transferConfig) {
+  return {
+    allowTriage: transferConfig?.allowTriage ?? false,
+    allowedTeamSlugs: (transferConfig?.allowedTeamSlugs ?? [])
+      .map((slug) => slug.trim())
+      .filter((slug) => slug.length > 0),
+  };
+}
 
 function getCollaboratorPermission(repository, username) {
   const collaborator = repository?.collaborators?.edges?.find(
@@ -10,11 +20,69 @@ function getCollaboratorPermission(repository, username) {
   return collaborator?.permission;
 }
 
-export function hasCommitterAccess(sourcePermission, targetPermission) {
+export function hasCommitterAccess(
+  sourcePermission,
+  targetPermission,
+  allowTriage,
+) {
+  const allowedPermissions = allowTriage
+    ? new Set([...committerPermissions, triagePermission])
+    : committerPermissions;
+
   return (
-    committerPermissions.has(sourcePermission) ||
-    committerPermissions.has(targetPermission)
+    allowedPermissions.has(sourcePermission) ||
+    allowedPermissions.has(targetPermission)
   );
+}
+
+export function hasTransferAccess(
+  sourcePermission,
+  targetPermission,
+  allowTriage,
+  allowedByTeam,
+) {
+  return (
+    allowedByTeam ||
+    hasCommitterAccess(sourcePermission, targetPermission, allowTriage)
+  );
+}
+
+async function hasAllowedTeamMembership(token, owner, username, teamSlugs) {
+  const memberships = await Promise.all(
+    teamSlugs.map(async (teamSlug) => {
+      const result = await graphql(
+        `
+          query ($owner: String!, $teamSlug: String!, $username: String!) {
+            organization(login: $owner) {
+              team(slug: $teamSlug) {
+                members(query: $username, first: 1) {
+                  nodes {
+                    login
+                  }
+                }
+              }
+            }
+          }
+        `,
+        {
+          owner,
+          teamSlug,
+          username,
+          headers: {
+            authorization: `token ${token}`,
+          },
+        },
+      );
+
+      return (
+        result.organization?.team?.members?.nodes?.some(
+          (node) => node.login.toLowerCase() === username.toLowerCase(),
+        ) ?? false
+      );
+    }),
+  );
+
+  return memberships.some(Boolean);
 }
 
 async function convertLabelsToIds(labels, token, login, repository) {
@@ -409,7 +477,9 @@ export async function transferIssue(
   targetRepo,
   issueId,
   username,
+  transferConfig,
 ) {
+  const authorizationConfig = getTransferAuthorizationConfig(transferConfig);
   const { source, target } = await graphql(
     `
       query (
@@ -452,10 +522,22 @@ export async function transferIssue(
     },
   );
 
+  const allowedByTeam =
+    authorizationConfig.allowedTeamSlugs.length > 0
+      ? await hasAllowedTeamMembership(
+          token,
+          owner,
+          username,
+          authorizationConfig.allowedTeamSlugs,
+        )
+      : false;
+
   if (
-    !hasCommitterAccess(
+    !hasTransferAccess(
       getCollaboratorPermission(source, username),
       getCollaboratorPermission(target, username),
+      authorizationConfig.allowTriage,
+      allowedByTeam,
     )
   ) {
     throw new Error(

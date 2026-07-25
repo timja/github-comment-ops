@@ -33,6 +33,8 @@ commands:
   reviewer:
     enabled: false
   transfer:
+    allowTriage: false # allow TRIAGE permission on either repository
+    allowedTeamSlugs: [] # allow members of any listed org team slug
     enabled: false
 ```
 
@@ -134,7 +136,8 @@ _Note: If a team exists but the team doesn't have read access to the repository 
 ### /transfer <destination_repo>
 
 Transfers a GitHub issue to another repository in the same organization.
-Only users with committer access on either the source or destination repository can use this command.
+Only users with committer access on either the source or destination repository can use this command by default.
+This can be extended via configuration to also allow users with triage permission and/or users in specific org teams.
 
 #### Permissions required
 
