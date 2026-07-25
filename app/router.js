@@ -45,12 +45,27 @@ export async function router(auth, id, payload, verbose) {
   }
 
   try {
-    const { config } = await octokit.config.get({
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      path: ".github/comment-ops.yml",
-      defaults: (configs) => deepmerge.all([defaultConfig, ...configs]),
+    // noinspection JSUnusedGlobalSymbols
+    const owner = payload.repository.owner.login;
+    const repoName = payload.repository.name;
+    const configPath = ".github/comment-ops.yml";
+
+    // Fetch org-level config from the .github repo
+    const { files: orgFiles } = await octokit.config.get({
+      owner,
+      repo: ".github",
+      path: configPath,
     });
+
+    // Fetch repo-level config (files[0] is always the requested repo's file)
+    const { files: repoFiles } = await octokit.config.get({
+      owner,
+      repo: repoName,
+      path: configPath,
+    });
+
+    // Merge in order: default → org → repo
+    const config = mergeConfigs(defaultConfig, orgFiles, repoFiles);
     validateConfig(config);
 
     for (const command of commands) {
@@ -74,4 +89,24 @@ function getCommentNodeId(payload) {
   }
 
   return payload.comment.node_id;
+}
+
+export function mergeConfigs(defaults, orgFiles, repoFiles) {
+  // Only use repo files if the repo has its own config, to avoid including
+  // the org .github fallthrough that the plugin adds when no repo config exists
+  const hasRepoConfig = !!repoFiles[0]?.config;
+
+  const orgConfigs = orgFiles
+    .map((f) => f.config)
+    .filter(Boolean)
+    .reverse();
+  const repoConfigs = hasRepoConfig
+    ? repoFiles
+        .map((f) => f.config)
+        .filter(Boolean)
+        .reverse()
+    : [];
+
+  // Merge in order: default → org → repo
+  return deepmerge.all([defaults, ...orgConfigs, ...repoConfigs]);
 }
