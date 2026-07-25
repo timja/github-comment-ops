@@ -13,7 +13,7 @@ export function getLogger(name) {
       }
 
       if (stack) {
-        response = response += ` - ${stack}`;
+        response += ` - ${stack}`;
       }
       return response;
     },
