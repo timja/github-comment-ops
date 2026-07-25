@@ -96,9 +96,15 @@ export function mergeConfigs(defaults, orgFiles, repoFiles) {
   // the org .github fallthrough that the plugin adds when no repo config exists
   const hasRepoConfig = !!repoFiles[0]?.config;
 
-  const orgConfigs = orgFiles.map((f) => f.config).filter(Boolean).reverse();
+  const orgConfigs = orgFiles
+    .map((f) => f.config)
+    .filter(Boolean)
+    .reverse();
   const repoConfigs = hasRepoConfig
-    ? repoFiles.map((f) => f.config).filter(Boolean).reverse()
+    ? repoFiles
+        .map((f) => f.config)
+        .filter(Boolean)
+        .reverse()
     : [];
 
   // Merge in order: default → org → repo
