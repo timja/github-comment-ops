@@ -2,10 +2,12 @@ export const defaultConfig = {
   commands: {
     label: {
       allowedLabels: [],
+      protectedLabels: [],
       enabled: false,
     },
     removeLabel: {
       allowedLabels: [],
+      protectedLabels: [],
       enabled: false,
     },
     reopen: {

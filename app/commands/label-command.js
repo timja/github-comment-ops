@@ -6,6 +6,7 @@ import { extractCommaSeparated } from "../converters.js";
 
 import { getLogger } from "../logger.js";
 import {
+  extractAuthorAssociation,
   extractBody,
   extractHtmlUrl,
   extractLabelableId,
@@ -34,7 +35,7 @@ export class LabelCommand extends Command {
 
   enabled(config) {
     const labels = extractCommaSeparated(this.matches()[1]);
-    return labelEnabled(config, labels);
+    return labelEnabled(config, labels, extractAuthorAssociation(this.payload));
   }
 
   async run(authToken) {
