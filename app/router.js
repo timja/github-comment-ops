@@ -71,7 +71,7 @@ export async function router(auth, id, payload, verbose) {
     for (const command of commands) {
       const result = command.enabled(config);
       await (result.enabled
-        ? command.run(authToken)
+        ? command.run(authToken, config)
         : reportError(authToken, extractLabelableId(payload), result.error));
     }
   } catch (error) {

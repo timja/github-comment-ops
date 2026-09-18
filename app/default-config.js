@@ -19,6 +19,8 @@ export const defaultConfig = {
     },
     transfer: {
       enabled: false,
+      allowTriage: false,
+      allowedTeamSlugs: [],
     },
   },
 };

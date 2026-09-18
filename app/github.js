@@ -1,5 +1,90 @@
 import { graphql } from "@octokit/graphql";
 
+const committerPermissions = new Set(["WRITE", "MAINTAIN", "ADMIN"]);
+const triagePermission = "TRIAGE";
+
+function getTransferAuthorizationConfig(transferConfig) {
+  return {
+    allowTriage: transferConfig?.allowTriage ?? false,
+    allowedTeamSlugs: (transferConfig?.allowedTeamSlugs ?? [])
+      .map((slug) => slug.trim())
+      .filter((slug) => slug.length > 0),
+  };
+}
+
+function getCollaboratorPermission(repository, username) {
+  const collaborator = repository?.collaborators?.edges?.find(
+    (edge) => edge?.node?.login?.toLowerCase() === username.toLowerCase(),
+  );
+
+  return collaborator?.permission;
+}
+
+export function hasCommitterAccess(
+  sourcePermission,
+  targetPermission,
+  allowTriage,
+) {
+  const allowedPermissions = allowTriage
+    ? new Set([...committerPermissions, triagePermission])
+    : committerPermissions;
+
+  return (
+    allowedPermissions.has(sourcePermission) ||
+    allowedPermissions.has(targetPermission)
+  );
+}
+
+export function hasTransferAccess(
+  sourcePermission,
+  targetPermission,
+  allowTriage,
+  allowedByTeam,
+) {
+  return (
+    allowedByTeam ||
+    hasCommitterAccess(sourcePermission, targetPermission, allowTriage)
+  );
+}
+
+async function hasAllowedTeamMembership(token, owner, username, teamSlugs) {
+  const memberships = await Promise.all(
+    teamSlugs.map(async (teamSlug) => {
+      const result = await graphql(
+        `
+          query ($owner: String!, $teamSlug: String!, $username: String!) {
+            organization(login: $owner) {
+              team(slug: $teamSlug) {
+                members(query: $username, first: 1) {
+                  nodes {
+                    login
+                  }
+                }
+              }
+            }
+          }
+        `,
+        {
+          owner,
+          teamSlug,
+          username,
+          headers: {
+            authorization: `token ${token}`,
+          },
+        },
+      );
+
+      return (
+        result.organization?.team?.members?.nodes?.some(
+          (node) => node.login.toLowerCase() === username.toLowerCase(),
+        ) ?? false
+      );
+    }),
+  );
+
+  return memberships.some(Boolean);
+}
+
 async function convertLabelsToIds(labels, token, login, repository) {
   const convertedLabels = await Promise.all(
     labels.map(
@@ -391,23 +476,74 @@ export async function transferIssue(
   sourceRepo,
   targetRepo,
   issueId,
+  username,
+  transferConfig,
 ) {
-  const { target } = await graphql(
+  const authorizationConfig = getTransferAuthorizationConfig(transferConfig);
+  const { source, target } = await graphql(
     `
-      query ($owner: String!, $targetRepo: String!) {
+      query (
+        $owner: String!
+        $sourceRepo: String!
+        $targetRepo: String!
+        $username: String!
+      ) {
+        source: repository(owner: $owner, name: $sourceRepo) {
+          collaborators(query: $username, first: 1) {
+            edges {
+              permission
+              node {
+                login
+              }
+            }
+          }
+        }
         target: repository(owner: $owner, name: $targetRepo) {
           id
+          collaborators(query: $username, first: 1) {
+            edges {
+              permission
+              node {
+                login
+              }
+            }
+          }
         }
       }
     `,
     {
       owner,
+      sourceRepo,
       targetRepo,
+      username,
       headers: {
         authorization: `token ${token}`,
       },
     },
   );
+
+  const allowedByTeam =
+    authorizationConfig.allowedTeamSlugs.length > 0
+      ? await hasAllowedTeamMembership(
+          token,
+          owner,
+          username,
+          authorizationConfig.allowedTeamSlugs,
+        )
+      : false;
+
+  if (
+    !hasTransferAccess(
+      getCollaboratorPermission(source, username),
+      getCollaboratorPermission(target, username),
+      authorizationConfig.allowTriage,
+      allowedByTeam,
+    )
+  ) {
+    throw new Error(
+      `User ${username} requires committer access on ${sourceRepo} or ${targetRepo} to transfer issues`,
+    );
+  }
 
   await graphql(
     `
