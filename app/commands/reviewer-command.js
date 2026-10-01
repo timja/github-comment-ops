@@ -5,6 +5,7 @@ import { Command } from "./command.js";
 import { extractUsersAndTeams } from "../converters.js";
 import { getLogger } from "../logger.js";
 import {
+  extractAuthorAssociation,
   extractBody,
   extractHtmlUrl,
   extractLabelableId,
@@ -32,7 +33,7 @@ export class ReviewerCommand extends Command {
   }
 
   enabled(config) {
-    return reviewerEnabled(config);
+    return reviewerEnabled(config, extractAuthorAssociation(this.payload));
   }
 
   async run(authToken) {
