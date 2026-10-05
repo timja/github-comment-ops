@@ -25,3 +25,15 @@ export function extractLabelableId(payload) {
 
   return payload.issue.node_id;
 }
+
+export function extractAuthorAssociation(payload) {
+  if (payload.review) {
+    return payload.review.author_association;
+  }
+
+  if (payload.comment) {
+    return payload.comment.author_association;
+  }
+
+  return payload.pull_request?.author_association;
+}

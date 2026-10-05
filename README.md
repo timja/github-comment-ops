@@ -22,19 +22,30 @@ Default configuration:
 commands:
   close:
     enabled: false
+    permission: all
   label:
     allowedLabels: [] # any label is allowed
     enabled: false
+    permission: all
   removeLabel:
     allowedLabels: [] # any label is allowed
     enabled: false
+    permission: all
   reopen:
     enabled: false
+    permission: all
   reviewer:
     enabled: false
+    permission: all
   transfer:
     enabled: false
+    permission: all
 ```
+
+`permission` is optional and defaults to `all`. Supported values are:
+
+- `all` - anyone who can comment can use the command
+- `member` - only organization members and owners can use the command
 
 ## Getting started
 
