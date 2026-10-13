@@ -8,6 +8,245 @@ import {
 } from "./command-enabled.js";
 
 describe("command-enabled", () => {
+  describe("permission levels", () => {
+    test("defaults to all permissions when not configured", () => {
+      const sut = closeEnabled(
+        {
+          commands: {
+            close: {
+              enabled: true,
+            },
+          },
+        },
+        "CONTRIBUTOR",
+      );
+
+      expect(sut.enabled).toEqual(true);
+    });
+
+    test.each([
+      [
+        "transfer",
+        () =>
+          transferEnabled(
+            {
+              commands: {
+                transfer: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "MEMBER",
+          ),
+      ],
+      [
+        "close",
+        () =>
+          closeEnabled(
+            {
+              commands: {
+                close: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "MEMBER",
+          ),
+      ],
+      [
+        "reopen",
+        () =>
+          reopenEnabled(
+            {
+              commands: {
+                reopen: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "MEMBER",
+          ),
+      ],
+      [
+        "label",
+        () =>
+          labelEnabled(
+            {
+              commands: {
+                label: {
+                  enabled: true,
+                  permission: "member",
+                  allowedLabels: [],
+                },
+              },
+            },
+            ["label1"],
+            "MEMBER",
+          ),
+      ],
+      [
+        "remove-label",
+        () =>
+          removeLabelEnabled(
+            {
+              commands: {
+                removeLabel: {
+                  enabled: true,
+                  permission: "member",
+                  allowedLabels: [],
+                },
+              },
+            },
+            ["label1"],
+            "MEMBER",
+          ),
+      ],
+      [
+        "reviewer",
+        () =>
+          reviewerEnabled(
+            {
+              commands: {
+                reviewer: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "MEMBER",
+          ),
+      ],
+    ])("allows organization members to use %s", (_, sutFactory) => {
+      expect(sutFactory().enabled).toEqual(true);
+    });
+
+    test("allows organization owners to use member-only commands", () => {
+      const sut = reviewerEnabled(
+        {
+          commands: {
+            reviewer: {
+              enabled: true,
+              permission: "member",
+            },
+          },
+        },
+        "OWNER",
+      );
+
+      expect(sut.enabled).toEqual(true);
+    });
+
+    test.each([
+      [
+        "transfer",
+        () =>
+          transferEnabled(
+            {
+              commands: {
+                transfer: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "CONTRIBUTOR",
+          ),
+      ],
+      [
+        "close",
+        () =>
+          closeEnabled(
+            {
+              commands: {
+                close: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "CONTRIBUTOR",
+          ),
+      ],
+      [
+        "reopen",
+        () =>
+          reopenEnabled(
+            {
+              commands: {
+                reopen: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "CONTRIBUTOR",
+          ),
+      ],
+      [
+        "label",
+        () =>
+          labelEnabled(
+            {
+              commands: {
+                label: {
+                  enabled: true,
+                  permission: "member",
+                  allowedLabels: [],
+                },
+              },
+            },
+            ["label1"],
+            "CONTRIBUTOR",
+          ),
+      ],
+      [
+        "remove-label",
+        () =>
+          removeLabelEnabled(
+            {
+              commands: {
+                removeLabel: {
+                  enabled: true,
+                  permission: "member",
+                  allowedLabels: [],
+                },
+              },
+            },
+            ["label1"],
+            "CONTRIBUTOR",
+          ),
+      ],
+      [
+        "reviewer",
+        () =>
+          reviewerEnabled(
+            {
+              commands: {
+                reviewer: {
+                  enabled: true,
+                  permission: "member",
+                },
+              },
+            },
+            "CONTRIBUTOR",
+          ),
+      ],
+    ])(
+      "blocks non-members from using %s when permission is member",
+      (command, sutFactory) => {
+        const sut = sutFactory();
+
+        expect(sut).toEqual({
+          enabled: false,
+          error: `The \`${command}\` command is restricted to organization members`,
+        });
+      },
+    );
+  });
+
   describe("transferEnabled", () => {
     test("is enabled when config is enabled", () => {
       const sut = transferEnabled({

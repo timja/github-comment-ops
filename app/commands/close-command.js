@@ -4,6 +4,7 @@ import { closeEnabled } from "../command-enabled.js";
 import { closeIssue } from "../github.js";
 import { getLogger } from "../logger.js";
 import {
+  extractAuthorAssociation,
   extractBody,
   extractHtmlUrl,
   extractLabelableId,
@@ -31,7 +32,7 @@ export class CloseCommand extends Command {
   }
 
   enabled(config) {
-    return closeEnabled(config);
+    return closeEnabled(config, extractAuthorAssociation(this.payload));
   }
 
   async run(authToken) {
