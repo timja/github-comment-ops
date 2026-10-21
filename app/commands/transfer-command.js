@@ -34,9 +34,10 @@ export class TransferCommand extends Command {
     return transferEnabled(config);
   }
 
-  async run(authToken) {
+  async run(authToken, config) {
     const targetRepo = this.matches()[1];
     const sourceRepo = this.payload.repository.name;
+    const transferConfig = config.commands.transfer;
 
     const logger = classLogger.child({
       user: this.payload.sender.login,
@@ -53,6 +54,8 @@ export class TransferCommand extends Command {
         sourceRepo,
         targetRepo,
         extractLabelableId(this.payload),
+        this.payload.sender.login,
+        transferConfig,
       );
     } catch (error) {
       logger.error(
