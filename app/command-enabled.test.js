@@ -125,6 +125,42 @@ describe("command-enabled", () => {
 
       expect(sut.enabled).toEqual(false);
     });
+
+    test("is disabled when protected label is modified by non-collaborator", () => {
+      const sut = labelEnabled(
+        {
+          commands: {
+            label: {
+              enabled: true,
+              allowedLabels: [],
+              protectedLabels: ["status:active-incident"],
+            },
+          },
+        },
+        ["status:active-incident"],
+        "CONTRIBUTOR",
+      );
+
+      expect(sut.enabled).toEqual(false);
+    });
+
+    test("is enabled when protected label is modified by collaborator", () => {
+      const sut = labelEnabled(
+        {
+          commands: {
+            label: {
+              enabled: true,
+              allowedLabels: [],
+              protectedLabels: ["status:active-incident"],
+            },
+          },
+        },
+        ["status:active-incident"],
+        "COLLABORATOR",
+      );
+
+      expect(sut.enabled).toEqual(true);
+    });
   });
 
   test("is enabled when label is in allowedLabels with blanks", () => {
@@ -283,6 +319,42 @@ describe("command-enabled", () => {
       );
 
       expect(sut.enabled).toEqual(false);
+    });
+
+    test("is disabled when protected label is removed by non-collaborator", () => {
+      const sut = removeLabelEnabled(
+        {
+          commands: {
+            removeLabel: {
+              enabled: true,
+              allowedLabels: [],
+              protectedLabels: ["status:active-incident"],
+            },
+          },
+        },
+        ["status:active-incident"],
+        "FIRST_TIME_CONTRIBUTOR",
+      );
+
+      expect(sut.enabled).toEqual(false);
+    });
+
+    test("is enabled when protected label is removed by member", () => {
+      const sut = removeLabelEnabled(
+        {
+          commands: {
+            removeLabel: {
+              enabled: true,
+              allowedLabels: [],
+              protectedLabels: ["status:active-incident"],
+            },
+          },
+        },
+        ["status:active-incident"],
+        "MEMBER",
+      );
+
+      expect(sut.enabled).toEqual(true);
     });
   });
 

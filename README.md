@@ -24,9 +24,11 @@ commands:
     enabled: false
   label:
     allowedLabels: [] # any label is allowed
+    protectedLabels: [] # only collaborators, members and owners can modify these
     enabled: false
   removeLabel:
     allowedLabels: [] # any label is allowed
+    protectedLabels: [] # only collaborators, members and owners can modify these
     enabled: false
   reopen:
     enabled: false
@@ -89,6 +91,8 @@ Closes the current issue. `not-planned` can be passed as the closure reason, e.g
 
 Adds a label to the current issue or pull request
 
+`protectedLabels` can be used to restrict specific labels so they can only be modified by repository collaborators, members and owners.
+
 #### Permissions required
 
 - Issues
@@ -99,6 +103,8 @@ Adds a label to the current issue or pull request
 ### /remove-label <label1,label2,...>
 
 Removes a label from the current issue or pull request
+
+`protectedLabels` can be used to restrict specific labels so they can only be modified by repository collaborators, members and owners.
 
 #### Permissions required
 

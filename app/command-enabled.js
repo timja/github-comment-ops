@@ -9,8 +9,33 @@ function notEnabled(command) {
   };
 }
 
-function trimLabels(labels) {
+function trimLabels(labels = []) {
   return labels.map((it) => it.trim());
+}
+
+const privilegedAuthorAssociations = new Set([
+  "COLLABORATOR",
+  "MEMBER",
+  "OWNER",
+]);
+
+function protectedLabelEnabled(labelConfig, labels, authorAssociation) {
+  const protectedLabels = trimLabels(labelConfig.protectedLabels);
+  const protectedRequestedLabels = labels.filter((label) =>
+    protectedLabels.includes(label),
+  );
+  if (protectedRequestedLabels.length === 0) {
+    return enabled;
+  }
+
+  if (privilegedAuthorAssociations.has(authorAssociation)) {
+    return enabled;
+  }
+
+  return {
+    enabled: false,
+    error: `${protectedRequestedLabels.join(",")} are protected labels and can only be modified by repository collaborators`,
+  };
 }
 
 export function transferEnabled(config) {
@@ -21,7 +46,7 @@ export function transferEnabled(config) {
   return enabled;
 }
 
-export function labelEnabled(config, labels) {
+export function labelEnabled(config, labels, authorAssociation) {
   const labelConfig = config.commands.label;
 
   if (!labelConfig.enabled) {
@@ -42,7 +67,7 @@ export function labelEnabled(config, labels) {
     };
   }
 
-  return enabled;
+  return protectedLabelEnabled(labelConfig, labels, authorAssociation);
 }
 
 export function closeEnabled(config) {
@@ -61,7 +86,7 @@ export function reopenEnabled(config) {
   return enabled;
 }
 
-export function removeLabelEnabled(config, labels) {
+export function removeLabelEnabled(config, labels, authorAssociation) {
   const labelConfig = config.commands.removeLabel;
   if (!labelConfig.enabled) {
     return notEnabled("remove-label");
@@ -81,7 +106,7 @@ export function removeLabelEnabled(config, labels) {
     };
   }
 
-  return enabled;
+  return protectedLabelEnabled(labelConfig, labels, authorAssociation);
 }
 
 export function reviewerEnabled(config) {

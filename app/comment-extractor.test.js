@@ -1,4 +1,5 @@
 import {
+  extractAuthorAssociation,
   extractBody,
   extractHtmlUrl,
   extractLabelableId,
@@ -74,6 +75,38 @@ describe("extractors", () => {
           },
         }),
       ).toEqual("PR_abcdefgh");
+    });
+  });
+
+  describe("extractAuthorAssociation", () => {
+    test("is a review", () => {
+      expect(
+        extractAuthorAssociation({
+          review: {
+            author_association: "MEMBER",
+          },
+        }),
+      ).toEqual("MEMBER");
+    });
+
+    test("is a pull request body command", () => {
+      expect(
+        extractAuthorAssociation({
+          pull_request: {
+            author_association: "OWNER",
+          },
+        }),
+      ).toEqual("OWNER");
+    });
+
+    test("is an issue comment", () => {
+      expect(
+        extractAuthorAssociation({
+          comment: {
+            author_association: "CONTRIBUTOR",
+          },
+        }),
+      ).toEqual("CONTRIBUTOR");
     });
   });
 });
